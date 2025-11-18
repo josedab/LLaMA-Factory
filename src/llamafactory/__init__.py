@@ -25,7 +25,75 @@ Use modelscope: USE_MODELSCOPE_HUB=1
 Use openmind: USE_OPENMIND_HUB=1
 """
 
+from .exceptions import (
+    ERROR_CODES,
+    LLaMAFactoryError,
+    # Configuration errors
+    ConfigurationError,
+    InvalidArgumentError,
+    IncompatibleArgumentsError,
+    MissingArgumentError,
+    # Model errors
+    ModelError,
+    ModelLoadingError,
+    TokenizerError,
+    AdapterError,
+    IncompatibleModelError,
+    # Data errors
+    DataError,
+    DatasetNotFoundError,
+    DataFormatError,
+    DataProcessingError,
+    # Training errors
+    TrainingError,
+    CheckpointError,
+    DistributedTrainingError,
+    # Inference errors
+    InferenceError,
+    EngineError,
+    GenerationError,
+    # Dependency errors
+    DependencyError,
+    MissingDependencyError,
+    IncompatibleVersionError,
+)
 from .extras.env import VERSION
 
 
 __version__ = VERSION
+
+__all__ = [
+    "__version__",
+    # Error codes
+    "ERROR_CODES",
+    # Base exception
+    "LLaMAFactoryError",
+    # Configuration errors
+    "ConfigurationError",
+    "InvalidArgumentError",
+    "IncompatibleArgumentsError",
+    "MissingArgumentError",
+    # Model errors
+    "ModelError",
+    "ModelLoadingError",
+    "TokenizerError",
+    "AdapterError",
+    "IncompatibleModelError",
+    # Data errors
+    "DataError",
+    "DatasetNotFoundError",
+    "DataFormatError",
+    "DataProcessingError",
+    # Training errors
+    "TrainingError",
+    "CheckpointError",
+    "DistributedTrainingError",
+    # Inference errors
+    "InferenceError",
+    "EngineError",
+    "GenerationError",
+    # Dependency errors
+    "DependencyError",
+    "MissingDependencyError",
+    "IncompatibleVersionError",
+]
