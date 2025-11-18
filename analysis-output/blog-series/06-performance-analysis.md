@@ -576,6 +576,85 @@ report_to: []  # Disable external logging during benchmarks
 
 ---
 
+## Hardware-Specific Recommendations
+
+### Consumer GPUs (RTX 3090, 4090)
+
+- **Memory**: 24GB VRAM
+- **Recommendation**: QLoRA with 4-bit quantization
+- **Max Model**: 13B (QLoRA) or 7B (LoRA)
+
+```yaml
+quantization_bit: 4
+lora_rank: 8
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+flash_attn: fa2
+```
+
+### Workstation GPUs (A6000, L40)
+
+- **Memory**: 48GB VRAM
+- **Recommendation**: LoRA without quantization for speed
+- **Max Model**: 30B (LoRA) or 13B (full)
+
+```yaml
+lora_rank: 16
+per_device_train_batch_size: 4
+bf16: true
+flash_attn: fa2
+```
+
+### Data Center GPUs (A100, H100)
+
+- **Memory**: 80GB VRAM
+- **Recommendation**: Higher batch sizes, optional DeepSpeed
+- **Max Model**: 70B (LoRA) or 30B (full)
+
+```yaml
+lora_rank: 32
+per_device_train_batch_size: 8
+bf16: true
+flash_attn: fa2
+# For 70B full fine-tuning:
+# deepspeed: examples/deepspeed/ds_z3_config.json
+```
+
+### Multi-GPU Clusters
+
+For multi-node training:
+
+```yaml
+deepspeed: examples/deepspeed/ds_z3_config.json
+gradient_checkpointing: true
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 4
+```
+
+Use NCCL for fast GPU communication and ensure high-bandwidth interconnects (NVLink, InfiniBand).
+
+---
+
+## Cost Optimization
+
+### Cloud Training Tips
+
+1. **Use spot/preemptible instances**: 60-80% cost savings
+2. **Enable checkpointing**: Resume after preemption
+3. **Right-size instances**: Don't over-provision VRAM
+4. **Use gradient accumulation**: Smaller instances with larger effective batch
+
+### Training Time Estimates
+
+| Model | Method | Hardware | Time (1000 steps) |
+|-------|--------|----------|-------------------|
+| 7B | QLoRA | RTX 4090 | ~30 min |
+| 7B | LoRA | A100 | ~15 min |
+| 13B | QLoRA | A100 | ~25 min |
+| 70B | QLoRA | 4x A100 | ~60 min |
+
+---
+
 ## Key Takeaways
 
 1. **Start with QLoRA**: Best memory/quality trade-off for most cases

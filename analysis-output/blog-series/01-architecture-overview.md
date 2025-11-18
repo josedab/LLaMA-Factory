@@ -412,6 +412,76 @@ Check `src/llamafactory/api/chat.py` for request handling
 
 ---
 
+## Cross-Cutting Concerns
+
+LLaMA-Factory handles several cross-cutting concerns elegantly:
+
+### State Management
+
+State flows through the system in a predictable pattern:
+
+1. **Configuration State**: Immutable dataclasses parsed at startup
+2. **Model State**: Managed by HuggingFace Trainer (checkpoints, optimizer state)
+3. **Training State**: Tracked via TrainerState (steps, epochs, metrics)
+4. **UI State**: Managed by Gradio for WebUI
+
+There's no global mutable state—each component receives what it needs through function parameters, making the code testable and predictable.
+
+### Error Propagation
+
+Errors propagate through standard Python exceptions with validation at boundaries:
+
+```python
+# Validation happens early in the pipeline
+def get_train_args(args):
+    # Parse arguments
+    model_args, data_args, ... = parse_args(args)
+
+    # Validate combinations
+    if model_args.quantization_bit and finetuning_args.finetuning_type == "full":
+        raise ValueError("Quantization requires LoRA, not full fine-tuning")
+
+    return model_args, data_args, ...
+```
+
+This "fail fast" approach ensures users get clear error messages before expensive operations begin.
+
+### Logging and Observability
+
+The custom logging system (`extras/logging.py`) provides:
+- Rank-aware logging for distributed training
+- Async file output for WebUI
+- Configurable verbosity via environment variables
+- Integration with W&B, TensorBoard, and SwanLab
+
+```python
+logger.info_rank0("This only logs from rank 0")
+logger.warning_rank0_once("This warning appears only once")
+```
+
+---
+
+## Production Considerations
+
+LLaMA-Factory is designed for production use:
+
+### Scalability
+- Supports multi-node training with elastic restart
+- DeepSpeed ZeRO for training models larger than GPU memory
+- Multiple inference engines optimized for different scales
+
+### Reliability
+- Automatic checkpoint detection and resumption
+- Graceful handling of SIGABRT for training interruption
+- Comprehensive input validation
+
+### Operability
+- OpenAI-compatible API for easy integration
+- Docker images for CUDA, ROCm, and NPU
+- Environment variable configuration for deployment
+
+---
+
 ## Key Takeaways
 
 1. **Layered Architecture**: Clear separation between entry points, application services, domain logic, and infrastructure
@@ -419,6 +489,7 @@ Check `src/llamafactory/api/chat.py` for request handling
 3. **HuggingFace Foundation**: Built on Transformers and Trainer for stability and familiarity
 4. **Multi-Backend Strategy**: Supports multiple inference engines for different use cases
 5. **Template System**: Handles model-specific formatting through declarative templates
+6. **Production-Ready**: Designed for scalability, reliability, and operability from the start
 
 ---
 

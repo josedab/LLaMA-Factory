@@ -628,6 +628,87 @@ def test_contrastive_training():
 
 ---
 
+## Best Practices for Extensions
+
+### Follow Existing Patterns
+
+When extending LLaMA-Factory, follow the patterns already established:
+
+1. **Use dataclasses for configuration**: Add new arguments to the appropriate `*_args.py` file
+2. **Validate early**: Add validation in `__post_init__` or `_verify_*` functions
+3. **Log appropriately**: Use `logger.info_rank0()` for distributed training
+4. **Handle errors gracefully**: Provide actionable error messages
+
+### Backwards Compatibility
+
+When adding features, consider backwards compatibility:
+
+```python
+# Good: Optional parameter with default
+def my_function(required_param, new_feature=False):
+    if new_feature:
+        # New behavior
+        pass
+    else:
+        # Original behavior
+        pass
+
+# Bad: Breaking existing calls
+def my_function(required_param, new_required_param):  # Breaks existing code
+    pass
+```
+
+### Documentation Requirements
+
+For any extension to be merged upstream, include:
+- Module and function docstrings (Google style)
+- Type hints for all parameters and returns
+- Example in docstring or tests
+- Update relevant README sections
+
+---
+
+## Troubleshooting Common Issues
+
+### Model Not Loading
+
+```python
+# Error: "Model architecture not found"
+# Solution: Add to SUPPORTED_MODELS in constants.py
+```
+
+### Template Not Applied
+
+```python
+# Check: Is template registered?
+from llamafactory.data.template import TEMPLATES
+print("mytemplate" in TEMPLATES)  # Should be True
+
+# Check: Is template specified in config?
+# --template mytemplate
+```
+
+### Custom Dataset Not Found
+
+```python
+# Check: Is dataset in registry?
+from llamafactory.data.loader import load_dataset_info
+info = load_dataset_info("data")
+print("my_dataset" in info)
+
+# Check: Does file exist at specified path?
+```
+
+### Training Stage Not Recognized
+
+```python
+# Check: Is stage added to FinetuningArguments?
+# Check: Is workflow imported in tuner.py?
+# Check: Is routing added to run_exp()?
+```
+
+---
+
 ## Key Takeaways
 
 1. **Models**: Add to constants, create template, patch if needed
