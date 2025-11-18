@@ -1,0 +1,128 @@
+%% LLaMA-Factory Architecture Overview
+%% Analysis Commit: 45f0437
+
+graph TD
+    subgraph "Entry Points"
+        CLI[CLI<br/>cli.py]
+        WebUI[WebUI<br/>webui/]
+        API[REST API<br/>api/]
+        Python[Python API<br/>Direct Import]
+    end
+
+    subgraph "Launcher"
+        L[launcher.py]
+        L -->|Distributed| TR[torchrun]
+        L -->|Single GPU| Direct[Direct Execution]
+    end
+
+    CLI --> L
+    WebUI --> L
+    API --> Chat
+    Python --> L
+
+    subgraph "Application Layer"
+        Train[Training<br/>train/tuner.py]
+        Chat[Inference<br/>chat/chat_model.py]
+        Eval[Evaluation<br/>eval/evaluator.py]
+    end
+
+    TR --> Train
+    Direct --> Train
+    L --> Chat
+    L --> Eval
+
+    subgraph "Training Stages"
+        PT[Pre-Training<br/>train/pt/]
+        SFT[Supervised FT<br/>train/sft/]
+        RM[Reward Model<br/>train/rm/]
+        DPO[DPO<br/>train/dpo/]
+        PPO[PPO<br/>train/ppo/]
+        KTO[KTO<br/>train/kto/]
+    end
+
+    Train --> PT
+    Train --> SFT
+    Train --> RM
+    Train --> DPO
+    Train --> PPO
+    Train --> KTO
+
+    subgraph "Inference Engines"
+        HF[HuggingFace Engine]
+        VLLM[vLLM Engine]
+        SG[SGLang Engine]
+        KT[KTransformers Engine]
+    end
+
+    Chat --> HF
+    Chat --> VLLM
+    Chat --> SG
+    Chat --> KT
+
+    subgraph "Domain Layer"
+        Model[Model Loading<br/>model/loader.py]
+        Data[Data Pipeline<br/>data/loader.py]
+        HParams[Configuration<br/>hparams/parser.py]
+    end
+
+    PT --> Model
+    PT --> Data
+    SFT --> Model
+    SFT --> Data
+    RM --> Model
+    RM --> Data
+    DPO --> Model
+    DPO --> Data
+    PPO --> Model
+    PPO --> Data
+    KTO --> Model
+    KTO --> Data
+
+    HF --> Model
+    VLLM --> Model
+    SG --> Model
+    KT --> Model
+
+    subgraph "Model Components"
+        Loader[Model Loader]
+        Adapter[Adapter Init<br/>LoRA/QLoRA/OFT]
+        Patcher[Model Patcher<br/>FlashAttn/Unsloth]
+    end
+
+    Model --> Loader
+    Model --> Adapter
+    Model --> Patcher
+
+    subgraph "Data Components"
+        DLoader[Dataset Loader]
+        Converter[Format Converter]
+        Processor[Data Processor]
+        Collator[Data Collator]
+    end
+
+    Data --> DLoader
+    DLoader --> Converter
+    Converter --> Processor
+    Processor --> Collator
+
+    subgraph "Infrastructure"
+        Extras[Utilities<br/>extras/]
+        Logging[Logging<br/>extras/logging.py]
+        Constants[Constants<br/>extras/constants.py]
+    end
+
+    Model --> Extras
+    Data --> Extras
+    HParams --> Extras
+    Train --> Logging
+
+    style CLI fill:#e3f2fd
+    style WebUI fill:#e3f2fd
+    style API fill:#e3f2fd
+    style Python fill:#e3f2fd
+    style Train fill:#f3e5f5
+    style Chat fill:#f3e5f5
+    style Eval fill:#f3e5f5
+    style Model fill:#e8f5e9
+    style Data fill:#fff3e0
+    style Extras fill:#fce4ec

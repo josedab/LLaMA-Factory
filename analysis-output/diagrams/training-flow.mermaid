@@ -1,0 +1,71 @@
+%% LLaMA-Factory Training Flow
+%% Analysis Commit: 45f0437
+
+sequenceDiagram
+    participant User
+    participant CLI
+    participant Launcher
+    participant Parser
+    participant ModelLoader
+    participant DataLoader
+    participant Trainer
+    participant Callbacks
+
+    User->>CLI: llamafactory-cli train config.yaml
+    CLI->>Launcher: launch()
+
+    alt Distributed Training
+        Launcher->>Launcher: torchrun setup
+        Launcher->>Launcher: Spawn processes
+    end
+
+    Launcher->>Parser: get_train_args(config)
+    Parser->>Parser: Load YAML/JSON
+    Parser->>Parser: Validate arguments
+    Parser-->>Launcher: model_args, data_args, training_args, finetuning_args
+
+    Launcher->>Callbacks: Register callbacks
+    Note over Callbacks: LogCallback, ReporterCallback, etc.
+
+    Launcher->>ModelLoader: load_tokenizer(model_args)
+    ModelLoader-->>Launcher: tokenizer
+
+    Launcher->>DataLoader: get_dataset(data_args, tokenizer)
+    DataLoader->>DataLoader: Load from source
+    DataLoader->>DataLoader: Convert format
+    DataLoader->>DataLoader: Apply template
+    DataLoader->>DataLoader: Process for stage
+    DataLoader-->>Launcher: dataset_module
+
+    Launcher->>ModelLoader: load_model(model_args, finetuning_args)
+    ModelLoader->>ModelLoader: Load base model
+    ModelLoader->>ModelLoader: Apply quantization
+    ModelLoader->>ModelLoader: Init adapters (LoRA)
+    ModelLoader->>ModelLoader: Apply patches
+    ModelLoader-->>Launcher: model
+
+    Launcher->>Trainer: Create trainer
+    Note over Trainer: Seq2SeqTrainer / DPOTrainer / PPOTrainer
+
+    alt do_train
+        Launcher->>Trainer: trainer.train()
+        loop Training Steps
+            Trainer->>Callbacks: on_step_begin
+            Trainer->>Trainer: Forward pass
+            Trainer->>Trainer: Compute loss
+            Trainer->>Trainer: Backward pass
+            Trainer->>Trainer: Optimizer step
+            Trainer->>Callbacks: on_log (metrics)
+            Trainer->>Callbacks: on_step_end
+        end
+        Trainer->>Trainer: Save model
+        Trainer-->>Launcher: train_result
+    end
+
+    alt do_eval
+        Launcher->>Trainer: trainer.evaluate()
+        Trainer-->>Launcher: eval_metrics
+    end
+
+    Launcher->>Callbacks: on_train_end
+    Launcher-->>User: Training complete

@@ -1,0 +1,85 @@
+%% LLaMA-Factory Inference Flow
+%% Analysis Commit: 45f0437
+
+flowchart TD
+    subgraph "API Request"
+        Client[API Client]
+        Request[POST /v1/chat/completions]
+    end
+
+    Client --> Request
+
+    subgraph "Request Processing"
+        App[FastAPI App<br/>api/app.py]
+        Validate[Request Validation]
+        Security[Security Checks<br/>SSRF, LFI]
+    end
+
+    Request --> App
+    App --> Validate
+    Validate --> Security
+
+    subgraph "Message Processing"
+        Parse[Parse Messages]
+        Template[Apply Chat Template]
+        Tokenize[Tokenize Input]
+    end
+
+    Security --> Parse
+    Parse --> Template
+    Template --> Tokenize
+
+    subgraph "Engine Selection"
+        ChatModel[ChatModel<br/>chat/chat_model.py]
+        Select{infer_backend}
+    end
+
+    Tokenize --> ChatModel
+    ChatModel --> Select
+
+    subgraph "Inference Engines"
+        HFEngine[HuggingFace Engine<br/>chat/hf_engine.py]
+        VLLMEngine[vLLM Engine<br/>chat/vllm_engine.py]
+        SGEngine[SGLang Engine<br/>chat/sglang_engine.py]
+        KTEngine[KTransformers Engine<br/>chat/kt_engine.py]
+    end
+
+    Select -->|huggingface| HFEngine
+    Select -->|vllm| VLLMEngine
+    Select -->|sglang| SGEngine
+    Select -->|ktransformers| KTEngine
+
+    subgraph "Generation"
+        Generate[Model Generation]
+        Decode[Decode Tokens]
+    end
+
+    HFEngine --> Generate
+    VLLMEngine --> Generate
+    SGEngine --> Generate
+    KTEngine --> Generate
+    Generate --> Decode
+
+    subgraph "Response"
+        Format[Format Response<br/>OpenAI Compatible]
+        Stream{Streaming?}
+        SSE[Server-Sent Events]
+        JSON[JSON Response]
+    end
+
+    Decode --> Format
+    Format --> Stream
+    Stream -->|Yes| SSE
+    Stream -->|No| JSON
+
+    subgraph "Client Response"
+        Response[HTTP Response]
+    end
+
+    SSE --> Response
+    JSON --> Response
+
+    style Client fill:#e3f2fd
+    style ChatModel fill:#f3e5f5
+    style Generate fill:#e8f5e9
+    style Response fill:#fff3e0

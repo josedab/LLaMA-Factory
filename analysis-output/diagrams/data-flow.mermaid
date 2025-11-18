@@ -1,0 +1,113 @@
+%% LLaMA-Factory Data Flow
+%% Analysis Commit: 45f0437
+
+flowchart TB
+    subgraph "Data Sources"
+        HFHub[HuggingFace Hub]
+        MSHub[ModelScope Hub]
+        Cloud[Cloud Storage<br/>S3/GCS]
+        Local[Local Files]
+    end
+
+    subgraph "Dataset Loading"
+        Registry[(dataset_info.json)]
+        Loader[Data Loader<br/>data/loader.py]
+    end
+
+    HFHub --> Loader
+    MSHub --> Loader
+    Cloud --> Loader
+    Local --> Loader
+    Registry --> Loader
+
+    subgraph "Format Conversion"
+        Alpaca[Alpaca Format]
+        ShareGPT[ShareGPT Format]
+        OpenAI[OpenAI Format]
+        Custom[Custom Format]
+    end
+
+    Loader --> Alpaca
+    Loader --> ShareGPT
+    Loader --> OpenAI
+    Loader --> Custom
+
+    subgraph "Standard Format"
+        Standard[Normalized Data<br/>prompt, response, system, tools, medias]
+    end
+
+    Alpaca --> Standard
+    ShareGPT --> Standard
+    OpenAI --> Standard
+    Custom --> Standard
+
+    subgraph "Template Application"
+        Template[Chat Template<br/>data/template.py]
+    end
+
+    Standard --> Template
+
+    subgraph "Model-Specific Format"
+        Llama3[LLaMA 3 Format<br/>header_id tokens]
+        Qwen[Qwen Format<br/>im_start tokens]
+        Mistral[Mistral Format<br/>INST tokens]
+        Other[Other Templates]
+    end
+
+    Template --> Llama3
+    Template --> Qwen
+    Template --> Mistral
+    Template --> Other
+
+    subgraph "Stage Processing"
+        PTProc[PreTraining Processor]
+        SFTProc[Supervised Processor]
+        PairProc[Pairwise Processor<br/>DPO/RM/KTO]
+    end
+
+    Llama3 --> PTProc
+    Llama3 --> SFTProc
+    Llama3 --> PairProc
+    Qwen --> PTProc
+    Qwen --> SFTProc
+    Qwen --> PairProc
+    Mistral --> PTProc
+    Mistral --> SFTProc
+    Mistral --> PairProc
+    Other --> PTProc
+    Other --> SFTProc
+    Other --> PairProc
+
+    subgraph "Tokenization"
+        Tokenizer[Tokenizer<br/>input_ids, attention_mask, labels]
+    end
+
+    PTProc --> Tokenizer
+    SFTProc --> Tokenizer
+    PairProc --> Tokenizer
+
+    subgraph "Batching"
+        Collator[Data Collator<br/>Padding, Packing]
+    end
+
+    Tokenizer --> Collator
+
+    subgraph "PyTorch DataLoader"
+        DL[DataLoader<br/>Batched Tensors]
+    end
+
+    Collator --> DL
+
+    subgraph "Training Loop"
+        Trainer[HF Trainer<br/>Forward, Backward, Optimize]
+    end
+
+    DL --> Trainer
+
+    style HFHub fill:#e3f2fd
+    style MSHub fill:#e3f2fd
+    style Cloud fill:#e3f2fd
+    style Local fill:#e3f2fd
+    style Standard fill:#fff3e0
+    style Tokenizer fill:#e8f5e9
+    style Trainer fill:#f3e5f5
