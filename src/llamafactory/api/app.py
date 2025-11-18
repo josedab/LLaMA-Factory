@@ -69,12 +69,17 @@ async def lifespan(app: "FastAPI", chat_model: "ChatModel"):  # collects GPU mem
 def create_app(chat_model: "ChatModel") -> "FastAPI":
     root_path = os.getenv("FASTAPI_ROOT_PATH", "")
     app = FastAPI(lifespan=partial(lifespan, chat_model=chat_model), root_path=root_path)
+
+    # Security: Configurable CORS settings with secure defaults
+    cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    cors_allow_credentials = os.getenv("CORS_ALLOW_CREDENTIALS", "false").lower() == "true"
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=cors_origins,  # Configurable origins
+        allow_credentials=cors_allow_credentials,  # Default to false
+        allow_methods=["GET", "POST", "OPTIONS"],  # Restrict methods
+        allow_headers=["Content-Type", "Authorization"],  # Restrict headers
     )
     api_key = os.getenv("API_KEY")
     security = HTTPBearer(auto_error=False)

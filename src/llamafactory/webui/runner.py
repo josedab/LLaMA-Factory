@@ -21,9 +21,54 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from transformers.utils import is_torch_npu_available
 
+from ..extras import logging
 from ..extras.constants import LLAMABOARD_CONFIG, MULTIMODAL_SUPPORTED_MODELS, PEFT_METHODS, TRAINING_STAGES
 from ..extras.misc import is_accelerator_available, torch_gc
 from ..extras.packages import is_gradio_available
+
+logger = logging.get_logger(__name__)
+
+# Security: Whitelist of allowed extra arguments to prevent injection
+ALLOWED_EXTRA_ARGS = {
+    # Training hyperparameters
+    "learning_rate", "num_train_epochs", "per_device_train_batch_size",
+    "gradient_accumulation_steps", "warmup_ratio", "warmup_steps",
+    "logging_steps", "save_steps", "eval_steps", "max_steps", "seed",
+    "weight_decay", "adam_beta1", "adam_beta2", "adam_epsilon",
+    "max_grad_norm", "lr_scheduler_type", "num_cycles",
+    # Evaluation parameters
+    "per_device_eval_batch_size", "eval_accumulation_steps",
+    # Generation parameters
+    "max_new_tokens", "top_p", "top_k", "temperature", "do_sample",
+    "num_beams", "repetition_penalty", "length_penalty",
+    # Data parameters
+    "max_samples", "val_size", "cutoff_len", "preprocessing_num_workers",
+    # Other safe parameters
+    "report_to", "save_total_limit", "save_on_each_node", "no_cuda",
+    "dataloader_num_workers", "dataloader_pin_memory",
+    "gradient_checkpointing", "optim", "group_by_length",
+}
+
+
+def validate_extra_args(extra_args_str: str) -> dict:
+    """Validate and sanitize extra arguments against whitelist."""
+    try:
+        extra_args = json.loads(extra_args_str)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in extra_args: {e}")
+
+    if not isinstance(extra_args, dict):
+        raise ValueError("extra_args must be a JSON object")
+
+    # Filter to allowed keys only
+    validated = {}
+    for key, value in extra_args.items():
+        if key in ALLOWED_EXTRA_ARGS:
+            validated[key] = value
+        else:
+            logger.warning_rank0(f"Ignoring disallowed extra_arg: {key}")
+
+    return validated
 from .common import (
     DEFAULT_CACHE_DIR,
     DEFAULT_CONFIG_DIR,
@@ -176,7 +221,8 @@ class Runner:
             ddp_timeout=180000000,
             include_num_input_tokens_seen=True,
         )
-        args.update(json.loads(get("train.extra_args")))
+        # Security: Validate extra args against whitelist
+        args.update(validate_extra_args(get("train.extra_args")))
 
         # checkpoints
         if get("top.checkpoint_path"):

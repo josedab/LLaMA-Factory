@@ -69,6 +69,20 @@ ROLE_MAPPING = {
     Role.TOOL: DataRole.OBSERVATION.value,
 }
 
+# Security: Default timeout for HTTP requests (in seconds)
+DEFAULT_REQUEST_TIMEOUT = 30
+
+
+def _redact_sensitive_fields(request: "ChatCompletionRequest") -> dict:
+    """Redact potentially sensitive content for logging."""
+    safe = dictify(request)
+    if "messages" in safe:
+        safe["messages"] = [
+            {**m, "content": f"<{len(str(m.get('content', '')))} chars>"}
+            for m in safe["messages"]
+        ]
+    return safe
+
 
 def _process_request(
     request: "ChatCompletionRequest",
@@ -80,8 +94,10 @@ def _process_request(
     Optional[list["VideoInput"]],
     Optional[list["AudioInput"]],
 ]:
-    if is_env_enabled("API_VERBOSE", "1"):
-        logger.info_rank0(f"==== request ====\n{json.dumps(dictify(request), indent=2, ensure_ascii=False)}")
+    if is_env_enabled("API_VERBOSE", "0"):  # Default to OFF for privacy
+        # Redact sensitive fields for logging
+        safe_request = _redact_sensitive_fields(request)
+        logger.info_rank0(f"==== request ====\n{json.dumps(safe_request, indent=2, ensure_ascii=False)}")
 
     if len(request.messages) == 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid length")
@@ -125,7 +141,7 @@ def _process_request(
                         image_stream = open(image_url, "rb")
                     else:  # web uri
                         check_ssrf_url(image_url)
-                        image_stream = requests.get(image_url, stream=True).raw
+                        image_stream = requests.get(image_url, stream=True, timeout=DEFAULT_REQUEST_TIMEOUT).raw
 
                     images.append(Image.open(image_stream).convert("RGB"))
                 elif input_item.type == "video_url":
@@ -138,7 +154,7 @@ def _process_request(
                         video_stream = video_url
                     else:  # web uri
                         check_ssrf_url(video_url)
-                        video_stream = requests.get(video_url, stream=True).raw
+                        video_stream = requests.get(video_url, stream=True, timeout=DEFAULT_REQUEST_TIMEOUT).raw
 
                     videos.append(video_stream)
                 elif input_item.type == "audio_url":
@@ -151,7 +167,7 @@ def _process_request(
                         audio_stream = audio_url
                     else:  # web uri
                         check_ssrf_url(audio_url)
-                        audio_stream = requests.get(audio_url, stream=True).raw
+                        audio_stream = requests.get(audio_url, stream=True, timeout=DEFAULT_REQUEST_TIMEOUT).raw
 
                     audios.append(audio_stream)
                 else:

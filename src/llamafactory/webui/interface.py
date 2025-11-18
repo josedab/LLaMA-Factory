@@ -14,9 +14,13 @@
 
 import os
 import platform
+import secrets
 
+from ..extras import logging
 from ..extras.misc import fix_proxy, is_env_enabled
 from ..extras.packages import is_gradio_available
+
+logger = logging.get_logger(__name__)
 from .common import save_config
 from .components import (
     create_chat_box,
@@ -94,7 +98,30 @@ def run_web_ui() -> None:
     server_name = os.getenv("GRADIO_SERVER_NAME", "[::]" if gradio_ipv6 else "0.0.0.0")
     print("Visit http://ip:port for Web UI, e.g., http://127.0.0.1:7860")
     fix_proxy(ipv6_enabled=gradio_ipv6)
-    create_ui().queue().launch(share=gradio_share, server_name=server_name, inbrowser=True)
+
+    # Security: Optional token-based authentication
+    auth_token = os.getenv("WEBUI_AUTH_TOKEN")
+    demo = create_ui().queue()
+
+    if auth_token:
+        # Token-based authentication
+        def auth_check(username: str, password: str) -> bool:
+            return secrets.compare_digest(password, auth_token)
+
+        demo.launch(
+            share=gradio_share,
+            server_name=server_name,
+            inbrowser=True,
+            auth=auth_check,
+            auth_message="Enter any username and the WEBUI_AUTH_TOKEN as password"
+        )
+    else:
+        # Warn if no auth configured
+        logger.warning_rank0(
+            "WebUI running without authentication. "
+            "Set WEBUI_AUTH_TOKEN environment variable for production use."
+        )
+        demo.launch(share=gradio_share, server_name=server_name, inbrowser=True)
 
 
 def run_web_demo() -> None:
@@ -103,4 +130,27 @@ def run_web_demo() -> None:
     server_name = os.getenv("GRADIO_SERVER_NAME", "[::]" if gradio_ipv6 else "0.0.0.0")
     print("Visit http://ip:port for Web UI, e.g., http://127.0.0.1:7860")
     fix_proxy(ipv6_enabled=gradio_ipv6)
-    create_web_demo().queue().launch(share=gradio_share, server_name=server_name, inbrowser=True)
+
+    # Security: Optional token-based authentication
+    auth_token = os.getenv("WEBUI_AUTH_TOKEN")
+    demo = create_web_demo().queue()
+
+    if auth_token:
+        # Token-based authentication
+        def auth_check(username: str, password: str) -> bool:
+            return secrets.compare_digest(password, auth_token)
+
+        demo.launch(
+            share=gradio_share,
+            server_name=server_name,
+            inbrowser=True,
+            auth=auth_check,
+            auth_message="Enter any username and the WEBUI_AUTH_TOKEN as password"
+        )
+    else:
+        # Warn if no auth configured
+        logger.warning_rank0(
+            "WebUI running without authentication. "
+            "Set WEBUI_AUTH_TOKEN environment variable for production use."
+        )
+        demo.launch(share=gradio_share, server_name=server_name, inbrowser=True)
