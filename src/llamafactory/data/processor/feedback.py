@@ -12,6 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Process datasets for KTO (Kahneman-Tversky Optimization) training.
+
+This module implements the FeedbackDatasetProcessor for preparing datasets
+for KTO training. It creates pairs of target and KL reference responses,
+handling both desirable (positive) and undesirable (negative) examples
+with appropriate tagging for the KTO loss function.
+
+Key Classes and Functions:
+    FeedbackDatasetProcessor: Processor for KTO feedback data.
+
+Example:
+    >>> from llamafactory.data.processor.feedback import FeedbackDatasetProcessor
+    >>> processor = FeedbackDatasetProcessor(
+    ...     template=template,
+    ...     tokenizer=tokenizer,
+    ...     processor=None,
+    ...     data_args=data_args
+    ... )
+    >>> model_inputs = processor.preprocess_dataset(examples)
+    >>> # Outputs include: input_ids, labels, kl_input_ids, kl_labels, kto_tags
+
+See Also:
+    llamafactory.data.processor.processor_utils: Base DatasetProcessor class.
+    llamafactory.data.collator: KTODataCollatorWithPadding for batching.
+    llamafactory.train.kto: KTO trainer implementation.
+"""
+
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Optional
 

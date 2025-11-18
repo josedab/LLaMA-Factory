@@ -12,6 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement NPU-optimized SwiGLU activation kernel.
+
+This module provides the NpuSwiGluKernel class which replaces standard MLP
+forward methods with NPU-optimized SwiGLU implementations. The kernel uses
+torch_npu.npu_swiglu for efficient gate-up-down projection computation.
+
+Key Classes:
+    NpuSwiGluKernel: MetaSwiGluKernel implementation that applies NPU-optimized
+        SwiGLU activation to matching MLP modules.
+
+Key Functions:
+    _npu_swiglu_forward: NPU-optimized forward function for SwiGLU MLP modules.
+
+Example:
+    Apply SwiGLU kernel to a model::
+
+        from llamafactory.v1.plugins.model_plugins.kernels.mlp.npu_swiglu import (
+            NpuSwiGluKernel
+        )
+        from llamafactory.v1.plugins.model_plugins.kernels.registry import apply_kernel
+
+        model = apply_kernel(model, NpuSwiGluKernel)
+
+See Also:
+    llamafactory.v1.plugins.model_plugins.kernels.registry: MetaSwiGluKernel base.
+    llamafactory.v1.plugins.model_plugins.kernels.constants: KernelType.SWIGLU.
+"""
+
 import re
 import types
 

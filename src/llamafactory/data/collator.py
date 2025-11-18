@@ -15,6 +15,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Provide data collators for batching samples during training.
+
+This module implements specialized data collators that handle padding, batching,
+and preparation of input tensors for different training objectives. It supports
+multimodal inputs (images, videos, audios), 4D attention masks for sequence
+packing, and specialized collation for preference learning methods like DPO and KTO.
+
+Key Classes and Functions:
+    prepare_4d_attention_mask: Expand 2D attention mask to 4D for packed sequences.
+    MultiModalDataCollatorForSeq2Seq: Base collator supporting vision-language models.
+    SFTDataCollatorWith4DAttentionMask: Collator with 4D attention mask for packing.
+    PairwiseDataCollatorWithPadding: Collator for pairwise preference data (DPO/ORPO).
+    KTODataCollatorWithPadding: Collator for KTO (Kahneman-Tversky Optimization) data.
+
+Example:
+    >>> from llamafactory.data.collator import MultiModalDataCollatorForSeq2Seq
+    >>> collator = MultiModalDataCollatorForSeq2Seq(
+    ...     tokenizer=tokenizer,
+    ...     model=model,
+    ...     template=template,
+    ...     processor=processor,
+    ...     pad_to_multiple_of=8
+    ... )
+    >>> batch = collator(features)  # features is a list of dicts
+
+See Also:
+    llamafactory.data.template: Chat templates for formatting conversations.
+    llamafactory.data.processor: Dataset processors that generate features.
+    transformers.DataCollatorForSeq2Seq: Base class for sequence-to-sequence collation.
+"""
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal, Optional
 

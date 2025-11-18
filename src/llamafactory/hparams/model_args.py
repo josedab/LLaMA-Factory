@@ -15,6 +15,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define arguments for model configuration, loading, and inference backends.
+
+This module provides comprehensive dataclass definitions for configuring model
+loading, quantization, multi-modal processing, model export, and various inference
+backends (vLLM, SGLang, KTransformers) in LLaMA-Factory. It supports features
+like FlashAttention, RoPE scaling, and multiple quantization methods.
+
+Key Classes:
+    BaseModelArguments: Core model configuration (path, tokenizer, attention).
+    QuantizationArguments: Quantization method and bit-width settings.
+    ProcessorArguments: Image, video, and audio processing parameters.
+    ExportArguments: Model export and conversion settings.
+    VllmArguments: vLLM inference engine configuration.
+    SGLangArguments: SGLang inference engine configuration.
+    KTransformersArguments: KTransformers optimization settings.
+    ModelArguments: Main class combining all model-related configurations.
+
+Key Attributes:
+    model_name_or_path: Model identifier or local path.
+    adapter_name_or_path: LoRA adapter paths (comma-separated).
+    quantization_bit: Quantization bit-width (4/8-bit).
+    flash_attn: FlashAttention implementation selection.
+    infer_backend: Inference engine (hf/vllm/sglang).
+    rope_scaling: RoPE embedding scaling strategy.
+
+Example:
+    >>> from llamafactory.hparams import ModelArguments
+    >>> model_args = ModelArguments(
+    ...     model_name_or_path="meta-llama/Llama-2-7b-hf",
+    ...     flash_attn="fa2",
+    ...     quantization_bit=4
+    ... )
+    >>> config_dict = model_args.to_dict()
+
+See Also:
+    transformers.PreTrainedModel: Base class for model loading.
+    llamafactory.hparams.FinetuningArguments: Fine-tuning configuration.
+    llamafactory.model: Model loading and patching implementations.
+"""
+
 import json
 from dataclasses import asdict, dataclass, field, fields
 from typing import Any, Literal, Optional, Union

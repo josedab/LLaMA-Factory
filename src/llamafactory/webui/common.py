@@ -12,6 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide common utility functions and configuration management for WebUI.
+
+This module contains shared utilities used across the WebUI package, including
+configuration loading/saving, path management, command generation, and
+DeepSpeed configuration creation. It serves as the foundation for file and
+process management in the LLaMA Factory web interface.
+
+Key Functions:
+    abort_process: Recursively abort child processes.
+    get_save_dir: Get path to saved model checkpoints.
+    load_config: Load user configuration from YAML file.
+    save_config: Save user configuration to YAML file.
+    get_model_path: Get model path based on model name and hub.
+    get_template: Get template name for a given model.
+    load_dataset_info: Load dataset information from JSON file.
+    load_args: Load training configuration from file.
+    save_args: Save training configuration to file.
+    gen_cmd: Generate CLI commands for preview.
+    save_cmd: Save CLI commands for training execution.
+    create_ds_config: Create DeepSpeed configuration files.
+
+Example:
+    >>> from llamafactory.webui.common import load_config, save_config
+    >>> # Load existing configuration
+    >>> config = load_config()
+    >>> print(config.get("lang", "en"))
+    >>> # Save configuration with language preference
+    >>> save_config(lang="zh", model_name="llama3")
+    >>> # Generate CLI command preview
+    >>> from llamafactory.webui.common import gen_cmd
+    >>> args = {"model_name_or_path": "meta-llama/Llama-3-8B", "stage": "sft"}
+    >>> cmd = gen_cmd(args)
+    >>> print(cmd)
+
+See Also:
+    llamafactory.webui.runner.Runner: Uses these utilities for training execution.
+    llamafactory.webui.control: UI control functions that depend on common utilities.
+    llamafactory.extras.constants: Constants used for configuration keys.
+"""
+
 import json
 import os
 import signal

@@ -12,6 +12,62 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement chat completion and score evaluation API endpoint handlers.
+
+This module contains the core request processing logic for the LlamaFactory
+API endpoints. It handles parsing OpenAI-compatible chat completion requests,
+processing multimodal inputs (images, videos, audio), managing tool/function
+calls, and generating both streaming and non-streaming responses.
+
+The module supports:
+    - Text and multimodal chat completions
+    - Streaming responses via Server-Sent Events
+    - Tool/function calling with automatic extraction
+    - Reward model score evaluation
+    - Base64, local file, and URL-based media inputs
+
+Key Functions:
+    create_chat_completion_response: Generate non-streaming chat completion.
+    create_stream_chat_completion_response: Generate streaming chat completion.
+    create_score_evaluation_response: Evaluate messages with reward model.
+
+Key Constants:
+    ROLE_MAPPING: Maps OpenAI roles to internal LlamaFactory roles.
+
+Example:
+    Use in FastAPI endpoint (internal usage)::
+
+        from llamafactory.api.chat import create_chat_completion_response
+        from llamafactory.api.protocol import ChatCompletionRequest
+
+        @app.post("/v1/chat/completions")
+        async def chat_completion(request: ChatCompletionRequest):
+            if request.stream:
+                generate = create_stream_chat_completion_response(request, chat_model)
+                return EventSourceResponse(generate)
+            else:
+                return await create_chat_completion_response(request, chat_model)
+
+    Process multimodal request::
+
+        # Request with image input
+        request = ChatCompletionRequest(
+            model="llava",
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What's in this image?"},
+                    {"type": "image_url", "image_url": {"url": "data:image/png;base64,..."}}
+                ]
+            }]
+        )
+
+See Also:
+    - :mod:`llamafactory.api.protocol`: Request/response data models.
+    - :mod:`llamafactory.api.common`: Security validation utilities.
+    - :mod:`llamafactory.chat.ChatModel`: Core chat model interface.
+"""
+
 import base64
 import io
 import json

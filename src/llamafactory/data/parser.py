@@ -12,6 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Parse dataset configurations and build dataset attribute objects.
+
+This module handles parsing of dataset configuration files (dataset_info.json)
+and construction of DatasetAttr objects that describe how to load and process
+datasets. It supports various data sources including HuggingFace Hub, ModelScope,
+OpenMind Hub, local files, cloud storage, and custom scripts.
+
+Key Classes and Functions:
+    DatasetAttr: Dataclass containing all attributes for a dataset configuration.
+    get_dataset_list: Parse dataset names and return list of DatasetAttr objects.
+
+Example:
+    >>> from llamafactory.data.parser import get_dataset_list, DatasetAttr
+    >>> # Get dataset attributes from configuration
+    >>> dataset_attrs = get_dataset_list(
+    ...     dataset_names=["alpaca_en", "identity"],
+    ...     dataset_dir="data"
+    ... )
+    >>> for attr in dataset_attrs:
+    ...     print(f"Dataset: {attr.dataset_name}, Format: {attr.formatting}")
+    >>> # Create custom dataset attribute
+    >>> custom_attr = DatasetAttr(
+    ...     load_from="hf_hub",
+    ...     dataset_name="tatsu-lab/alpaca",
+    ...     formatting="alpaca"
+    ... )
+
+See Also:
+    llamafactory.data.loader: Uses DatasetAttr to load datasets.
+    llamafactory.data.converter: Uses DatasetAttr for format conversion.
+    llamafactory.extras.constants: DATA_CONFIG constant for config filename.
+"""
+
 import json
 import os
 from dataclasses import dataclass

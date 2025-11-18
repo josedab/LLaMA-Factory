@@ -12,6 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Process datasets for pairwise preference learning (DPO, ORPO, SimPO).
+
+This module implements the PairwiseDatasetProcessor for preparing datasets
+for preference learning methods. It processes chosen and rejected response
+pairs, creating the necessary input format for algorithms like Direct
+Preference Optimization (DPO) and its variants.
+
+Key Classes and Functions:
+    PairwiseDatasetProcessor: Processor for pairwise preference data.
+
+Example:
+    >>> from llamafactory.data.processor.pairwise import PairwiseDatasetProcessor
+    >>> processor = PairwiseDatasetProcessor(
+    ...     template=template,
+    ...     tokenizer=tokenizer,
+    ...     processor=None,
+    ...     data_args=data_args
+    ... )
+    >>> model_inputs = processor.preprocess_dataset(examples)
+    >>> # Outputs include: chosen_input_ids, chosen_labels, rejected_input_ids, rejected_labels
+
+See Also:
+    llamafactory.data.processor.processor_utils: Base DatasetProcessor class.
+    llamafactory.data.collator: PairwiseDataCollatorWithPadding for batching.
+    llamafactory.train.dpo: DPO trainer implementation.
+    llamafactory.train.orpo: ORPO trainer implementation.
+"""
+
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Optional
 

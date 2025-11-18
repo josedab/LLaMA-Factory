@@ -12,6 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define arguments for text generation and decoding parameters.
+
+This module provides the GeneratingArguments dataclass for configuring text
+generation behavior in LLaMA-Factory inference and evaluation. It includes
+settings for sampling strategies, beam search, and output length control.
+
+Key Classes:
+    GeneratingArguments: Dataclass containing all generation/decoding parameters
+        including sampling settings, beam search configuration, repetition
+        penalties, and length constraints.
+
+Key Attributes:
+    do_sample: Enable sampling-based generation vs greedy decoding.
+    temperature: Sampling temperature for token probability modulation.
+    top_p: Nucleus sampling probability threshold.
+    top_k: Top-k filtering parameter.
+    num_beams: Number of beams for beam search.
+    max_new_tokens: Maximum number of tokens to generate.
+    repetition_penalty: Penalty factor for repeated tokens.
+
+Example:
+    >>> from llamafactory.hparams import GeneratingArguments
+    >>> gen_args = GeneratingArguments(
+    ...     do_sample=True,
+    ...     temperature=0.7,
+    ...     top_p=0.9,
+    ...     max_new_tokens=512
+    ... )
+    >>> gen_config = gen_args.to_dict(obey_generation_config=True)
+
+See Also:
+    transformers.GenerationConfig: HuggingFace generation configuration.
+    llamafactory.hparams.ModelArguments: Model configuration for inference.
+    llamafactory.chat: Chat and inference implementations.
+"""
+
 from dataclasses import asdict, dataclass, field
 from typing import Any
 

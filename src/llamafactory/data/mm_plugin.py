@@ -15,6 +15,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Provide multimodal plugins for vision-language model support.
+
+This module implements plugins for handling multimodal inputs (images, videos, audios)
+across different vision-language model architectures. Each plugin handles model-specific
+processing of messages, token expansion, and multimodal input preparation for models
+like LLaVA, Qwen-VL, MiniCPM-V, InternVL, and others.
+
+Key Classes and Functions:
+    BasePlugin: Base class for all multimodal plugins.
+    get_mm_plugin: Factory function to get plugin by model type.
+    register_mm_plugin: Register custom multimodal plugins.
+    PLUGINS: Registry of available multimodal plugins.
+    Model-specific plugins:
+        - LlavaPlugin, LlavaNextPlugin, LlavaNextVideoPlugin
+        - Qwen2VLPlugin, Qwen2AudioPlugin, Qwen2OmniPlugin, Qwen3VLPlugin
+        - MiniCPMVPlugin, MllamaPlugin, PaliGemmaPlugin
+        - Gemma3Plugin, InternVLPlugin, GLM4VPlugin, PixtralPlugin
+        - VideoLlavaPlugin, Llama4Plugin, KimiVLPlugin
+
+Example:
+    >>> from llamafactory.data.mm_plugin import get_mm_plugin
+    >>> # Get plugin for Qwen2-VL model
+    >>> plugin = get_mm_plugin(
+    ...     name="qwen2_vl",
+    ...     image_token="<|image_pad|>",
+    ...     video_token="<|video_pad|>"
+    ... )
+    >>> # Process messages with multimodal content
+    >>> messages = plugin.process_messages(messages, images, videos, audios, processor)
+    >>> # Get multimodal inputs for model
+    >>> mm_inputs = plugin.get_mm_inputs(images, videos, audios, imglens, vidlens, audlens, batch_ids, processor)
+
+See Also:
+    llamafactory.data.template: Templates that use multimodal plugins.
+    llamafactory.data.collator: Collators that process multimodal features.
+    llamafactory.extras.constants: Placeholder constants for multimodal tokens.
+"""
+
 import inspect
 import math
 import os

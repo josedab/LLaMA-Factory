@@ -12,6 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Define chat templates for formatting conversations and tokenization.
+
+This module provides the Template class and template registry (TEMPLATES) for
+formatting conversations according to different model architectures. Templates
+define how system prompts, user messages, assistant responses, and tool calls
+are formatted into token sequences. Each model family (LLaMA, Qwen, Mistral, etc.)
+has its own template specification.
+
+Key Classes and Functions:
+    Template: Main class for chat template formatting and tokenization.
+    TEMPLATES: Registry of all available chat templates (dict).
+    get_template_and_fix_tokenizer: Get template by name and fix tokenizer special tokens.
+    register_template: Register custom templates.
+
+Example:
+    >>> from llamafactory.data.template import get_template_and_fix_tokenizer, TEMPLATES
+    >>> # Get template for a model
+    >>> template = get_template_and_fix_tokenizer(tokenizer, data_args)
+    >>> # Encode a conversation
+    >>> messages = [
+    ...     {"role": "user", "content": "Hello"},
+    ...     {"role": "assistant", "content": "Hi there!"}
+    ... ]
+    >>> prompt_ids, response_ids = template.encode_oneturn(tokenizer, messages)
+    >>> # List available templates
+    >>> print(list(TEMPLATES.keys())[:5])
+    ['llama3', 'qwen', 'mistral', 'chatglm3', 'gemma']
+
+See Also:
+    llamafactory.data.formatter: Formatters used by templates for slot construction.
+    llamafactory.data.mm_plugin: Multimodal plugins integrated with templates.
+    llamafactory.data.tool_utils: Tool utilities for function calling templates.
+"""
+
 import re
 from copy import deepcopy
 from dataclasses import dataclass

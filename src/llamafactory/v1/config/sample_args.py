@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define sampling-related configuration arguments for v1 inference.
+
+This module provides the SampleArguments dataclass containing all configuration
+parameters related to text generation and sampling. These arguments control
+how the model generates text during inference, including maximum token limits
+and other generation parameters.
+
+Key Classes:
+    SampleArguments: Dataclass containing max_new_tokens and other generation
+        configuration options for text sampling.
+
+Example:
+    Create sample arguments with custom settings::
+
+        from llamafactory.v1.config.sample_args import SampleArguments
+
+        sample_args = SampleArguments(
+            max_new_tokens=256
+        )
+
+    Access from parsed configuration::
+
+        from llamafactory.v1.config.parser import get_args
+
+        *_, sample_args = get_args()
+        print(f"Max new tokens: {sample_args.max_new_tokens}")
+
+See Also:
+    llamafactory.v1.config.parser: Uses SampleArguments in argument parsing.
+    llamafactory.v1.core.chat_sampler: Consumes SampleArguments for generation.
+"""
 
 from dataclasses import dataclass, field
 

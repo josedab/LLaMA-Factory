@@ -12,6 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build the top section with model and configuration selection controls.
+
+This module creates the primary model configuration UI that appears at the
+top of the interface. It includes model selection, path configuration, hub
+selection, finetuning type, checkpoint loading, quantization settings,
+template selection, and optimization boosters.
+
+Key Functions:
+    create_top: Build complete top section with all model configuration
+        components and their event handlers.
+
+Example:
+    >>> from llamafactory.webui.components.top import create_top
+    >>> # Create top section components
+    >>> top_elems = create_top()
+    >>> # top_elems includes: lang, model_name, model_path, hub_name,
+    >>> # finetuning_type, checkpoint_path, quantization_bit,
+    >>> # quantization_method, template, rope_scaling, booster
+    >>> # Event handlers are automatically registered for:
+    >>> # - Model selection -> path/template update
+    >>> # - Finetuning type -> quantization/checkpoint updates
+    >>> # - Hub change -> model path updates
+
+See Also:
+    llamafactory.webui.control: Functions called by top component events.
+    llamafactory.webui.common.save_config: Persists user selections.
+    llamafactory.extras.constants.SUPPORTED_MODELS: Available model list.
+"""
+
 from typing import TYPE_CHECKING
 
 from ...data import TEMPLATES

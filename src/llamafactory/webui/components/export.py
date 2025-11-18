@@ -12,6 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build the model export tab for saving and quantizing trained models.
+
+This module creates UI components for exporting fine-tuned models. It supports
+merging LoRA adapters, GPTQ quantization, and pushing to Hugging Face Hub.
+The export process converts checkpoints to standalone model files for
+deployment.
+
+Key Functions:
+    can_quantize: Check if GPTQ quantization is available for checkpoint.
+    save_model: Execute model export with specified configuration.
+    create_export_tab: Build complete export tab with all options.
+
+Example:
+    >>> from llamafactory.webui.components.export import create_export_tab
+    >>> from llamafactory.webui.engine import Engine
+    >>> engine = Engine()
+    >>> # Create export tab
+    >>> export_elems = create_export_tab(engine)
+    >>> engine.manager.add_elems("export", export_elems)
+    >>> # export_elems includes: export_size, export_quantization_bit,
+    >>> # export_quantization_dataset, export_device, export_legacy_format,
+    >>> # export_dir, export_hub_model_id, extra_args, export_btn, info_box
+
+See Also:
+    llamafactory.train.tuner.export_model: Core export implementation.
+    llamafactory.webui.common.get_save_dir: Resolves checkpoint paths.
+    llamafactory.webui.locales.ALERTS: Export status messages.
+"""
+
 import json
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Union

@@ -12,6 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement model loading engine for v1 training.
+
+This module provides the ModelEngine class which handles model and processor
+loading for LLaMA Factory v1. It abstracts the complexity of loading various
+model architectures and their associated tokenizers/processors.
+
+The ModelEngine supports loading models from local paths and Hugging Face Hub,
+with options for trust settings and custom configurations. It returns both the
+model and processor needed for training and inference.
+
+Key Classes:
+    ModelEngine: Main model loading engine that provides methods to retrieve
+        the model and processor based on configuration arguments.
+
+Example:
+    Load model and processor::
+
+        from llamafactory.v1.config.model_args import ModelArguments
+        from llamafactory.v1.core.model_engine import ModelEngine
+
+        model_args = ModelArguments(
+            model="meta-llama/Llama-2-7b-hf",
+            trust_remote_code=True
+        )
+        engine = ModelEngine(model_args)
+        model = engine.get_model()
+        processor = engine.get_processor()
+
+See Also:
+    llamafactory.v1.config.model_args: Model configuration parameters.
+    llamafactory.v1.plugins.model_plugins: Model customization plugins.
+"""
+
 from ..config.model_args import ModelArguments
 from ..extras.types import Model, Processor
 

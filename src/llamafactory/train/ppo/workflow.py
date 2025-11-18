@@ -15,6 +15,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the PPO workflow for reinforcement learning from human feedback.
+
+This module provides the complete PPO training pipeline including tokenizer and
+model loading with valuehead, reference and reward model creation, trainer
+initialization, PPO training loop execution, and checkpoint saving.
+
+Key Functions:
+    run_ppo: Execute the complete PPO training workflow.
+
+Example:
+    >>> from llamafactory.train.ppo.workflow import run_ppo
+    >>> from llamafactory.hparams import get_train_args
+    >>> args = get_train_args()
+    >>> run_ppo(args.model_args, args.data_args, args.training_args,
+    ...         args.finetuning_args, args.generating_args)
+
+See Also:
+    - llamafactory.train.ppo.trainer: Custom PPO trainer used in this workflow.
+    - llamafactory.train.trainer_utils: Reference and reward model creation.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+"""
+
 from typing import TYPE_CHECKING, Optional
 
 from ...data import MultiModalDataCollatorForSeq2Seq, get_dataset, get_template_and_fix_tokenizer

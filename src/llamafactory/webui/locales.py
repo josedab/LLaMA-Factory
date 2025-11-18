@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define internationalization strings for WebUI components.
+
+This module contains the LOCALES and ALERTS dictionaries that provide
+multi-language support for the LLaMA Factory web interface. It supports
+English (en), Russian (ru), Chinese (zh), Korean (ko), and Japanese (ja)
+translations for all UI labels, tooltips, and alert messages.
+
+Key Variables:
+    LOCALES: Dictionary mapping element names to language-specific properties
+        (label, info, value) for Gradio components.
+    ALERTS: Dictionary mapping alert keys to language-specific message strings
+        for errors, warnings, and informational messages.
+
+Example:
+    >>> from llamafactory.webui.locales import LOCALES, ALERTS
+    >>> # Get label for model_name in Chinese
+    >>> label = LOCALES["model_name"]["zh"]["label"]
+    >>> print(label)  # "模型名称"
+    >>> # Get error message in English
+    >>> error = ALERTS["err_no_model"]["en"]
+    >>> print(error)  # "Please select a model."
+    >>> # Update component with locale
+    >>> import gradio as gr
+    >>> lang = "zh"
+    >>> model_name = gr.Textbox(**LOCALES["model_name"][lang])
+
+See Also:
+    llamafactory.webui.engine.Engine.change_lang: Applies locale to components.
+    llamafactory.webui.manager.Manager.get_elem_iter: Iterates elements for locale.
+"""
+
 LOCALES = {
     "title": {
         "en": {

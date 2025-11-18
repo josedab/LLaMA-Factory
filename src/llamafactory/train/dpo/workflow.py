@@ -15,6 +15,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the DPO workflow for direct preference optimization training.
+
+This module provides the complete DPO training pipeline including tokenizer
+and model loading, reference model creation, pairwise dataset preparation,
+trainer initialization, training with reward accuracy tracking, and evaluation.
+
+Key Functions:
+    run_dpo: Execute the complete DPO training workflow.
+
+Example:
+    >>> from llamafactory.train.dpo.workflow import run_dpo
+    >>> from llamafactory.hparams import get_train_args
+    >>> model_args, data_args, training_args, finetuning_args, _ = get_train_args()
+    >>> run_dpo(model_args, data_args, training_args, finetuning_args)
+
+See Also:
+    - llamafactory.train.dpo.trainer: Custom DPO trainer used in this workflow.
+    - llamafactory.train.trainer_utils: Reference model creation.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+    - llamafactory.data.collator: Pairwise data collator for DPO.
+"""
+
 from typing import TYPE_CHECKING, Optional
 
 from ...data import PairwiseDataCollatorWithPadding, get_dataset, get_template_and_fix_tokenizer

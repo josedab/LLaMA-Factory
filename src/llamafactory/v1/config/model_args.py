@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define model-related configuration arguments for v1 training.
+
+This module provides the ModelArguments dataclass containing all configuration
+parameters related to model loading and initialization. These arguments specify
+the model path, trust settings for remote code, and other model-specific options.
+
+Key Classes:
+    ModelArguments: Dataclass containing model path, trust_remote_code setting,
+        and other model loading configuration options.
+
+Example:
+    Create model arguments with custom settings::
+
+        from llamafactory.v1.config.model_args import ModelArguments
+
+        model_args = ModelArguments(
+            model="meta-llama/Llama-2-7b-hf",
+            trust_remote_code=True
+        )
+
+    Access from parsed configuration::
+
+        from llamafactory.v1.config.parser import get_args
+
+        _, model_args, *_ = get_args()
+        print(f"Model: {model_args.model}")
+
+See Also:
+    llamafactory.v1.config.parser: Uses ModelArguments in argument parsing.
+    llamafactory.v1.core.model_engine: Consumes ModelArguments for model loading.
+"""
 
 from dataclasses import dataclass, field
 

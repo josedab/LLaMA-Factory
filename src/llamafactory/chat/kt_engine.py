@@ -12,6 +12,70 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the KTransformers inference engine for optimized generation.
+
+This module provides the KTransformers-based inference engine, designed for
+efficient inference on consumer hardware. KTransformers offers CPU offloading
+capabilities and optimized kernels for specific model architectures like
+DeepSeek-V2/V3, enabling large model inference with reduced GPU memory
+requirements.
+
+The engine supports both standard and long-context modes, CUDA graph
+optimization, FlashInfer MLA acceleration for supported architectures, and
+force-think mode for reasoning models. It handles async generation with
+thread-based streaming for efficient token delivery.
+
+Key Classes:
+    KTransformersEngine: Inference engine using KTransformers library.
+
+Key Methods (KTransformersEngine):
+    chat: Generate complete responses with KTransformers optimization.
+    stream_chat: Stream tokens with incremental delivery.
+    get_scores: Compute reward model scores (for non-generative models).
+
+Key Features:
+    - CPU offloading for large models on limited GPU memory
+    - FlashInfer MLA support for DeepSeek architectures
+    - CUDA graph capture for reduced kernel launch overhead
+    - Long-context mode for extended sequence lengths
+    - Force-think mode for reasoning model activation
+
+Usage Example:
+    >>> from llamafactory.chat.kt_engine import KTransformersEngine
+    >>> from llamafactory.hparams import (
+    ...     ModelArguments, DataArguments,
+    ...     FinetuningArguments, GeneratingArguments
+    ... )
+    >>>
+    >>> # Initialize with KTransformers-specific arguments
+    >>> model_args = ModelArguments(
+    ...     model_name_or_path="deepseek-ai/DeepSeek-V2-Lite",
+    ...     kt_maxlen=4096,
+    ...     kt_use_cuda_graph=True,
+    ...     kt_mode="normal"
+    ... )
+    >>> data_args = DataArguments(template="deepseek2")
+    >>> finetuning_args = FinetuningArguments(stage="sft")
+    >>> generating_args = GeneratingArguments()
+    >>>
+    >>> engine = KTransformersEngine(
+    ...     model_args, data_args, finetuning_args, generating_args
+    ... )
+    >>>
+    >>> # Generate with streaming
+    >>> import asyncio
+    >>> messages = [{"role": "user", "content": "Explain quantum computing."}]
+    >>> async def stream():
+    ...     async for token in engine.stream_chat(messages):
+    ...         print(token, end="")
+    >>> asyncio.run(stream())
+
+See Also:
+    llamafactory.chat.base_engine: Abstract base class definition.
+    ktransformers.util.utils.prefill_and_generate_capture: Core generation function.
+    ktransformers.server.config.config.Config: KTransformers configuration.
+"""
+
 import asyncio
 import os
 import platform

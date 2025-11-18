@@ -11,6 +11,42 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Provide accelerator detection utilities for v1.
+
+This module provides utility functions for detecting the available hardware
+accelerator in the current environment. It supports CUDA, NPU, XPU, and MPS
+devices, with cached results for efficient repeated queries.
+
+Key Functions:
+    get_available_accelerator: Get the current hardware accelerator device.
+    is_torch_npu_available: Check if NPU is available (cached).
+    is_torch_cuda_available: Check if CUDA is available (cached).
+    is_torch_xpu_available: Check if XPU is available (cached).
+    is_torch_mps_available: Check if MPS is available (cached).
+
+Example:
+    Check available accelerator::
+
+        from llamafactory.v1.plugins.trainer_plugins.distributed.accelerate import (
+            get_available_accelerator,
+            is_torch_npu_available
+        )
+
+        device = get_available_accelerator()
+        print(f"Using device: {device}")
+
+        if is_torch_npu_available():
+            print("NPU is available")
+
+Note:
+    The get_available_accelerator function requires torch>=2.7.0. Earlier versions
+    will raise an AttributeError or RuntimeError.
+
+See Also:
+    llamafactory.v1.plugins.model_plugins.kernels: Uses device detection for kernel selection.
+"""
+
 from functools import lru_cache
 
 import torch

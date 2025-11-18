@@ -15,6 +15,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement custom KTO trainer for binary feedback preference alignment.
+
+This module extends TRL's KTOTrainer to support custom optimizers, schedulers,
+configurable desirable/undesirable weights, and enhanced metric logging for
+Kahneman-Tversky Optimization training.
+
+Key Classes:
+    CustomKTOTrainer: Extended KTOTrainer with custom features and metric aggregation.
+
+Example:
+    >>> from llamafactory.train.kto.trainer import CustomKTOTrainer
+    >>> trainer = CustomKTOTrainer(
+    ...     model=model,
+    ...     ref_model=ref_model,
+    ...     args=training_args,
+    ...     finetuning_args=finetuning_args,
+    ...     data_collator=data_collator,
+    ...     **tokenizer_module
+    ... )
+    >>> trainer.train()
+
+See Also:
+    - trl.KTOTrainer: Base KTO trainer class.
+    - llamafactory.train.kto.workflow: KTO workflow using this trainer.
+    - llamafactory.train.trainer_utils: Log probability computation utilities.
+"""
+
 import warnings
 from collections import defaultdict
 from contextlib import nullcontext

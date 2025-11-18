@@ -16,6 +16,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide evaluation metrics for supervised fine-tuning.
+
+This module implements metric computation classes for evaluating SFT models,
+including token-level accuracy and text similarity metrics (ROUGE, BLEU) with
+support for HuggingFace's batch evaluation protocol.
+
+Key Functions:
+    eval_logit_processor: Process logits to extract predicted tokens.
+
+Key Classes:
+    ComputeAccuracy: Compute token-level accuracy with batch evaluation support.
+    ComputeSimilarity: Compute ROUGE and BLEU scores with batch evaluation support.
+
+Example:
+    >>> from llamafactory.train.sft.metric import ComputeAccuracy, ComputeSimilarity
+    >>> # For token-level accuracy
+    >>> compute_metrics = ComputeAccuracy()
+    >>> # For text similarity (ROUGE, BLEU)
+    >>> compute_metrics = ComputeSimilarity(tokenizer=tokenizer)
+    >>> trainer = Trainer(compute_metrics=compute_metrics, ...)
+
+See Also:
+    - llamafactory.train.sft.trainer: Trainer that uses these metrics.
+    - llamafactory.train.sft.workflow: Workflow that configures these metrics.
+    - rouge_chinese: Chinese ROUGE implementation used for similarity.
+    - nltk.translate.bleu_score: BLEU score implementation.
+"""
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional
 

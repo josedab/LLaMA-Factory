@@ -12,6 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Provide core data utilities and types for dataset handling.
+
+This module contains fundamental utilities used throughout the data pipeline,
+including role definitions for conversations, dataset merging and splitting
+functions, cloud storage access, and type definitions. These utilities form
+the foundation for data processing in LlamaFactory.
+
+Key Classes and Functions:
+    Role: Enumeration of conversation roles (USER, ASSISTANT, SYSTEM, FUNCTION, OBSERVATION).
+    SLOTS: Type alias for template slot definitions.
+    DatasetModule: TypedDict for train/eval dataset pairs.
+    merge_dataset: Merge multiple datasets using concatenation or interleaving.
+    split_dataset: Split dataset into training and validation sets.
+    get_dataset_module: Convert dataset or dataset dict to DatasetModule.
+    setup_fs: Set up filesystem for cloud storage (S3/GCS).
+    read_cloud_json: Read JSON/JSONL files from cloud storage.
+
+Example:
+    >>> from llamafactory.data.data_utils import Role, split_dataset, merge_dataset
+    >>> # Use Role enum for message formatting
+    >>> message = {"role": Role.USER.value, "content": "Hello"}
+    >>> # Merge multiple datasets
+    >>> merged = merge_dataset(datasets, data_args, seed=42)
+    >>> # Split into train/validation
+    >>> dataset_dict = split_dataset(train_data, eval_data, data_args, seed=42)
+
+See Also:
+    llamafactory.data.loader: Uses these utilities for dataset loading.
+    llamafactory.data.converter: Uses Role enum for message formatting.
+    llamafactory.hparams.DataArguments: Configuration for data processing.
+"""
+
 import json
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Any, Optional, TypedDict, Union

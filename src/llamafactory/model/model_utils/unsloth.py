@@ -12,6 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Integrate Unsloth for optimized model loading and training.
+
+This module provides integration with the Unsloth library which offers
+optimized model loading and training with significant speed improvements
+and memory savings. Unsloth uses custom CUDA kernels and optimizations.
+
+Key Functions:
+    load_unsloth_pretrained_model: Load model with Unsloth optimizations.
+    get_unsloth_peft_model: Get PEFT model with Unsloth compatibility.
+    load_unsloth_peft_model: Load existing adapter with Unsloth.
+
+Key Features:
+    - Optimized CUDA kernels for faster training
+    - Memory-efficient gradient checkpointing
+    - 4-bit quantization support
+    - Automatic RoPE scaling handling
+    - Custom gradient checkpointing implementation
+
+The module uses Unsloth's FastLanguageModel which provides:
+    - 2x faster training compared to standard implementations
+    - 60% less memory usage
+    - Support for various model architectures
+
+Example:
+    >>> from llamafactory.model.model_utils.unsloth import load_unsloth_pretrained_model
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.use_unsloth = True
+    >>> model_args.quantization_bit = 4
+    >>> model = load_unsloth_pretrained_model(config, model_args, finetuning_args)
+
+See Also:
+    llamafactory.model.loader: Uses Unsloth loading when model_args.use_unsloth.
+    llamafactory.model.adapter: Unsloth PEFT model handling.
+    https://github.com/unslothai/unsloth: Unsloth documentation.
+"""
+
 from typing import TYPE_CHECKING, Any, Optional
 
 from ...extras import logging

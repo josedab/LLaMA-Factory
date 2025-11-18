@@ -12,6 +12,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the HuggingFace Transformers inference engine.
+
+This module provides the HuggingFace-based inference engine for chat model
+generation. It leverages the transformers library for model loading and text
+generation, supporting a wide range of models available on HuggingFace Hub.
+The engine handles both autoregressive text generation and reward model scoring.
+
+Key features include multimodal support (images, videos, audios), customizable
+generation parameters, concurrent request limiting via semaphores, and streaming
+token generation using TextIteratorStreamer.
+
+Key Classes:
+    HuggingfaceEngine: Inference engine using HuggingFace Transformers.
+
+Key Methods (HuggingfaceEngine):
+    chat: Generate complete responses with configurable parameters.
+    stream_chat: Stream tokens incrementally for real-time output.
+    get_scores: Compute scores using reward/value head models.
+
+Key Static Methods:
+    _process_args: Prepare inputs and generation configuration.
+    _chat: Core synchronous chat implementation.
+    _stream_chat: Core synchronous streaming implementation.
+    _get_scores: Core synchronous scoring implementation.
+
+Usage Example:
+    >>> from llamafactory.chat.hf_engine import HuggingfaceEngine
+    >>> from llamafactory.hparams import (
+    ...     ModelArguments, DataArguments,
+    ...     FinetuningArguments, GeneratingArguments
+    ... )
+    >>>
+    >>> # Initialize with argument objects
+    >>> model_args = ModelArguments(model_name_or_path="gpt2")
+    >>> data_args = DataArguments(template="default")
+    >>> finetuning_args = FinetuningArguments(stage="sft")
+    >>> generating_args = GeneratingArguments()
+    >>>
+    >>> engine = HuggingfaceEngine(
+    ...     model_args, data_args, finetuning_args, generating_args
+    ... )
+    >>>
+    >>> # Generate response
+    >>> import asyncio
+    >>> messages = [{"role": "user", "content": "Hello!"}]
+    >>> responses = asyncio.run(engine.chat(messages))
+    >>> print(responses[0].response_text)
+
+See Also:
+    llamafactory.chat.base_engine: Abstract base class definition.
+    llamafactory.model.load_model: Model loading utilities.
+    llamafactory.model.load_tokenizer: Tokenizer loading utilities.
+    transformers.GenerationConfig: Generation parameter configuration.
+"""
+
 import asyncio
 import os
 from collections.abc import AsyncGenerator

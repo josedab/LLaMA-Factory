@@ -12,6 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement custom trainer class for pre-training with advanced optimizer support.
+
+This module extends HuggingFace's Trainer class to support custom optimizers
+(GaLore, APOLLO, LoRA+, BAdam), custom schedulers, FP8 training, and other
+LLaMA-Factory specific features for pre-training workflows.
+
+Key Classes:
+    CustomTrainer: Extended Trainer with custom optimizer and scheduler creation.
+
+Example:
+    >>> from llamafactory.train.pt.trainer import CustomTrainer
+    >>> trainer = CustomTrainer(
+    ...     model=model,
+    ...     args=training_args,
+    ...     finetuning_args=finetuning_args,
+    ...     data_collator=data_collator,
+    ...     **tokenizer_module
+    ... )
+    >>> trainer.train()
+
+See Also:
+    - transformers.Trainer: Base trainer class.
+    - llamafactory.train.trainer_utils: Custom optimizer and scheduler utilities.
+    - llamafactory.train.pt.workflow: Pre-training workflow using this trainer.
+"""
+
 from types import MethodType
 from typing import TYPE_CHECKING, Optional
 

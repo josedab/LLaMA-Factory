@@ -12,6 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define enumeration constants for kernel types and device types.
+
+This module provides the enumeration definitions used throughout the kernel
+plugin system to identify kernel categories and target hardware devices.
+
+Key Classes:
+    KernelType: Enumeration of supported kernel operation types (RMSNORM,
+        SWIGLU, FLASH_ATTENTION, ROPE, MOE).
+    DeviceType: Enumeration of supported hardware device types (CPU, CUDA,
+        NPU, XPU).
+
+Example:
+    Use kernel type constants::
+
+        from llamafactory.v1.plugins.model_plugins.kernels.constants import (
+            KernelType, DeviceType
+        )
+
+        kernel_type = KernelType.RMSNORM
+        device_type = DeviceType.NPU
+
+See Also:
+    llamafactory.v1.plugins.model_plugins.kernels.registry: Uses these constants.
+"""
+
 from enum import Enum
 
 

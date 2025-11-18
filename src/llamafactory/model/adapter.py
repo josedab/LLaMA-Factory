@@ -12,6 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Initialize and configure adapters for parameter-efficient fine-tuning.
+
+This module handles the initialization of various adapter methods including
+LoRA (Low-Rank Adaptation), DoRA, OFT (Orthogonal Fine-Tuning), and full/freeze
+tuning strategies. It manages adapter loading, merging, and configuration for
+both training and inference scenarios.
+
+Key Functions:
+    init_adapter: Main entry point for adapter initialization.
+    _setup_full_tuning: Configure full parameter fine-tuning.
+    _setup_freeze_tuning: Configure freeze tuning with selective layer training.
+    _setup_lora_tuning: Configure LoRA/DoRA/OFT adapters.
+
+Supported Fine-tuning Methods:
+    - Full: Train all model parameters.
+    - Freeze: Train only selected layers (first/last n layers or LLaMA-Pro style).
+    - LoRA: Low-Rank Adaptation with optional DoRA, RSLoRA, PiSSA.
+    - OFT: Orthogonal Fine-Tuning.
+
+Example:
+    >>> from llamafactory.model.adapter import init_adapter
+    >>> from transformers import AutoModelForCausalLM, AutoConfig
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model = init_adapter(
+    ...     config,
+    ...     model,
+    ...     model_args,
+    ...     finetuning_args,
+    ...     is_trainable=True
+    ... )
+
+See Also:
+    llamafactory.model.loader: Model loading that calls init_adapter.
+    llamafactory.model.model_utils.unsloth: Unsloth-specific adapter handling.
+    llamafactory.model.model_utils.ktransformers: KTransformers adapter support.
+"""
+
 import re
 from typing import TYPE_CHECKING
 

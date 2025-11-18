@@ -12,6 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define arguments for fine-tuning methods and training techniques.
+
+This module provides comprehensive dataclass definitions for configuring various
+fine-tuning strategies in LLaMA-Factory, including parameter-efficient methods
+(LoRA, OFT, Freeze), reinforcement learning from human feedback (RLHF), and
+advanced optimizers (GaLore, APOLLO, BAdam). It also includes experiment tracking
+configuration for SwanLab.
+
+Key Classes:
+    FreezeArguments: Partial-parameter (freeze) training configuration.
+    LoraArguments: Low-Rank Adaptation (LoRA) training settings.
+    OFTArguments: Orthogonal Fine-Tuning (OFT) configuration.
+    RLHFArguments: RLHF parameters for PPO, DPO, and KTO training.
+    GaloreArguments: Gradient Low-Rank Projection optimizer settings.
+    ApolloArguments: APOLLO optimizer configuration.
+    BAdamArgument: Block-wise Adam optimizer parameters.
+    SwanLabArguments: SwanLab experiment tracking configuration.
+    FinetuningArguments: Main class combining all fine-tuning configurations.
+
+Key Attributes:
+    stage: Training stage (pt/sft/rm/ppo/dpo/kto).
+    finetuning_type: Fine-tuning method (lora/oft/freeze/full).
+    lora_rank: LoRA intrinsic dimension.
+    lora_target: Target modules for LoRA adaptation.
+    pref_loss: Preference loss type for DPO training.
+
+Example:
+    >>> from llamafactory.hparams import FinetuningArguments
+    >>> finetuning_args = FinetuningArguments(
+    ...     stage="sft",
+    ...     finetuning_type="lora",
+    ...     lora_rank=16,
+    ...     lora_target="all"
+    ... )
+    >>> config_dict = finetuning_args.to_dict()
+
+See Also:
+    llamafactory.hparams.ModelArguments: Model configuration arguments.
+    llamafactory.hparams.TrainingArguments: Training hyperparameters.
+    peft: Parameter-Efficient Fine-Tuning library for LoRA implementation.
+"""
+
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Optional
 

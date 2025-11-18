@@ -12,6 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Apply Liger kernel optimizations for faster training.
+
+This module integrates the Liger kernel library which provides optimized CUDA
+kernels for transformer operations. Liger kernels can significantly speed up
+training by fusing operations and reducing memory access overhead.
+
+Key Functions:
+    apply_liger_kernel: Apply Liger kernel optimizations based on model type.
+
+Supported Model Types:
+    - Gemma (1, 2, 3, 3_text)
+    - GLM4, GLM4V
+    - Granite
+    - LLaMA, LLaVA, Mistral, Mixtral, MLLaMA
+    - OLMo2
+    - PaliGemma
+    - Phi3
+    - Qwen2, Qwen2-VL, Qwen2.5-VL, Qwen3, Qwen3-MoE
+
+The module automatically handles chunked cross-entropy vs regular cross-entropy
+based on the training stage (PT/SFT vs RM/PPO/DPO).
+
+Example:
+    >>> from llamafactory.model.model_utils.liger_kernel import apply_liger_kernel
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.enable_liger_kernel = True
+    >>> apply_liger_kernel(
+    ...     config, model_args,
+    ...     is_trainable=True,
+    ...     require_logits=False  # PT/SFT stage
+    ... )
+    >>> # Liger kernels are now applied to the model
+
+See Also:
+    llamafactory.model.loader: Calls apply_liger_kernel before model loading.
+    https://github.com/linkedin/Liger-Kernel: Liger kernel documentation.
+"""
+
 import inspect
 from typing import TYPE_CHECKING
 

@@ -12,6 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide chat model management and streaming inference for WebUI.
+
+This module implements the WebChatModel class that wraps the base ChatModel
+to provide web-based chat functionality. It handles model loading/unloading,
+message streaming, and special formatting for thinking models with collapsible
+thought display.
+
+Key Classes:
+    WebChatModel: Extended chat model with WebUI integration for loading,
+        unloading, and streaming chat responses.
+
+Key Functions:
+    _escape_html: Escape HTML characters in text for safe display.
+    _format_response: Format response text with thinking block support.
+    update_attr: Context manager for temporarily updating object attributes.
+
+Example:
+    >>> from llamafactory.webui.chatter import WebChatModel
+    >>> from llamafactory.webui.manager import Manager
+    >>> manager = Manager()
+    >>> chatter = WebChatModel(manager, demo_mode=False)
+    >>> # Load model using Gradio component data
+    >>> for status in chatter.load_model(data):
+    ...     print(status)
+    >>> # Stream chat responses
+    >>> for chatbot, messages in chatter.stream(chatbot, messages, ...):
+    ...     yield chatbot, messages
+
+See Also:
+    llamafactory.chat.ChatModel: Base chat model class.
+    llamafactory.webui.engine.Engine: Main engine that orchestrates WebUI.
+    llamafactory.webui.manager.Manager: Gradio component manager.
+"""
+
 import json
 import os
 from collections.abc import Generator

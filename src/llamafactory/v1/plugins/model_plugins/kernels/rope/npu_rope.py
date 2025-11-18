@@ -12,6 +12,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement NPU-optimized Rotary Position Embedding kernels.
+
+This module provides NPU-optimized RoPE kernels for accelerating rotary
+position embedding computation. It includes both standard RoPE and multimodal
+variants for vision-language models like Qwen2-VL.
+
+The kernels work by monkey-patching the apply_rotary_pos_emb functions in
+the attention modules with NPU-optimized implementations using torch_npu.npu_rotary_mul.
+
+Key Classes:
+    NpuRoPEKernel: MetaRoPEKernel implementation for standard RoPE acceleration.
+    NpuQwen2VLRoPEKernel: MetaRoPEKernel implementation for Qwen2-VL multimodal RoPE.
+
+Key Functions:
+    _apply_rotary_pos_emb: NPU-optimized standard RoPE application.
+    _apply_multimodal_rotary_pos_emb_qwen25_vl: NPU-optimized multimodal RoPE
+        for Qwen2-VL with section-based position encoding.
+
+Example:
+    Apply standard RoPE kernel::
+
+        from llamafactory.v1.plugins.model_plugins.kernels.rope.npu_rope import NpuRoPEKernel
+        from llamafactory.v1.plugins.model_plugins.kernels.registry import apply_kernel
+
+        model = apply_kernel(model, NpuRoPEKernel)
+
+    Apply Qwen2-VL multimodal RoPE kernel::
+
+        from llamafactory.v1.plugins.model_plugins.kernels.rope.npu_rope import (
+            NpuQwen2VLRoPEKernel
+        )
+        model = apply_kernel(model, NpuQwen2VLRoPEKernel)
+
+See Also:
+    llamafactory.v1.plugins.model_plugins.kernels.registry: MetaRoPEKernel base.
+    llamafactory.v1.plugins.model_plugins.kernels.constants: KernelType.ROPE.
+"""
+
 import sys
 
 import torch

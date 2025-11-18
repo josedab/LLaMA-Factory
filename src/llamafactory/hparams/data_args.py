@@ -15,6 +15,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define data-related arguments for training and evaluation datasets.
+
+This module provides the DataArguments dataclass which configures all aspects of
+dataset loading, preprocessing, and handling for LLaMA-Factory training and
+evaluation pipelines. It supports features like dataset mixing, streaming,
+sequence packing, and multi-modal data processing.
+
+Key Classes:
+    DataArguments: Main dataclass containing all data-related configuration options
+        including dataset paths, preprocessing parameters, tokenization settings,
+        and evaluation configurations.
+
+Key Attributes:
+    template: Prompt template selection for training and inference.
+    dataset: Training dataset names (comma-separated for multiple).
+    cutoff_len: Maximum tokenized sequence length.
+    streaming: Enable dataset streaming mode.
+    packing: Enable sequence packing for efficient training.
+    val_size: Validation set split ratio.
+
+Example:
+    >>> from llamafactory.hparams import DataArguments
+    >>> data_args = DataArguments(
+    ...     template="llama3",
+    ...     dataset="alpaca_en",
+    ...     cutoff_len=4096,
+    ...     streaming=False
+    ... )
+    >>> config_dict = data_args.to_dict()
+
+See Also:
+    llamafactory.hparams.ModelArguments: Model configuration arguments.
+    llamafactory.hparams.TrainingArguments: Training configuration arguments.
+    llamafactory.data: Dataset loading and processing modules.
+"""
+
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Optional
 

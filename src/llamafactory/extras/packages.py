@@ -15,6 +15,69 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide package availability checking utilities for LLaMA-Factory.
+
+This module contains functions to check whether optional packages are
+installed and to verify package versions. It enables graceful degradation
+when optional dependencies are not available and allows for conditional
+feature enabling based on installed packages.
+
+Functions:
+    is_pyav_available: Check if PyAV (av) is installed.
+    is_librosa_available: Check if librosa is installed.
+    is_fastapi_available: Check if FastAPI is installed.
+    is_galore_available: Check if GaLore optimizer is installed.
+    is_apollo_available: Check if Apollo optimizer is installed.
+    is_jieba_available: Check if jieba tokenizer is installed.
+    is_gradio_available: Check if Gradio is installed.
+    is_matplotlib_available: Check if matplotlib is installed.
+    is_mcore_adapter_available: Check if mcore_adapter is installed.
+    is_pillow_available: Check if Pillow (PIL) is installed.
+    is_ray_available: Check if Ray is installed.
+    is_kt_available: Check if KTransformers is installed.
+    is_requests_available: Check if requests is installed.
+    is_rouge_available: Check if rouge_chinese is installed.
+    is_safetensors_available: Check if safetensors is installed.
+    is_sglang_available: Check if SGLang is installed.
+    is_starlette_available: Check if sse_starlette is installed.
+    is_transformers_version_greater_than: Check transformers version.
+    is_torch_version_greater_than: Check PyTorch version.
+    is_uvicorn_available: Check if uvicorn is installed.
+    is_vllm_available: Check if vLLM is installed.
+
+Example:
+    Check package availability before using optional features::
+
+        from llamafactory.extras.packages import (
+            is_gradio_available,
+            is_vllm_available,
+            is_transformers_version_greater_than,
+        )
+
+        # Conditional import based on availability
+        if is_gradio_available():
+            import gradio as gr
+            # Launch web UI
+        else:
+            print("Gradio not installed, web UI unavailable")
+
+        # Check version requirements
+        if is_transformers_version_greater_than("4.40.0"):
+            # Use newer API features
+            pass
+
+        # Check inference engine availability
+        if is_vllm_available():
+            from vllm import LLM
+        else:
+            # Fall back to standard inference
+            pass
+
+See Also:
+    llamafactory.extras.misc: Version checking with error handling.
+    llamafactory.extras.env: Environment information display.
+"""
+
 import importlib.metadata
 import importlib.util
 from functools import lru_cache

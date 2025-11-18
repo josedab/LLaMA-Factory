@@ -12,6 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build the inference tab for model loading and interactive chat.
+
+This module creates the Chat tab UI with model loading controls, inference
+backend selection, and the embedded chat interface. It handles model
+loading/unloading and manages the visibility of multimodal input components
+based on the selected model type.
+
+Key Functions:
+    create_infer_tab: Build complete inference tab with backend selection,
+        model controls, and chat interface.
+
+Example:
+    >>> from llamafactory.webui.components.infer import create_infer_tab
+    >>> from llamafactory.webui.engine import Engine
+    >>> engine = Engine()
+    >>> # Create inference tab
+    >>> infer_elems = create_infer_tab(engine)
+    >>> engine.manager.add_elems("infer", infer_elems)
+    >>> # infer_elems includes: infer_backend, infer_dtype, extra_args,
+    >>> # load_btn, unload_btn, info_box, plus all chat_box elements
+
+See Also:
+    llamafactory.webui.chatter.WebChatModel: Handles model loading/inference.
+    llamafactory.webui.components.chatbot: Creates embedded chat interface.
+    llamafactory.webui.common.is_multimodal: Checks for vision/audio support.
+"""
+
 from typing import TYPE_CHECKING
 
 from ...extras.packages import is_gradio_available

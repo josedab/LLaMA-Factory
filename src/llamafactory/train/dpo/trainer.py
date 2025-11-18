@@ -15,6 +15,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement custom DPO trainer with multiple preference optimization algorithms.
+
+This module extends TRL's DPOTrainer to support multiple loss types (DPO, IPO,
+ORPO, SimPO, BCO), custom optimizers, reference model handling, and length
+difference penalization for preference alignment.
+
+Key Classes:
+    CustomDPOTrainer: Extended DPOTrainer with multiple loss functions and features.
+
+Example:
+    >>> from llamafactory.train.dpo.trainer import CustomDPOTrainer
+    >>> trainer = CustomDPOTrainer(
+    ...     model=model,
+    ...     ref_model=ref_model,
+    ...     args=training_args,
+    ...     finetuning_args=finetuning_args,
+    ...     data_collator=data_collator,
+    ...     **tokenizer_module
+    ... )
+    >>> trainer.train()
+
+See Also:
+    - trl.DPOTrainer: Base DPO trainer class.
+    - llamafactory.train.dpo.workflow: DPO workflow using this trainer.
+    - llamafactory.train.trainer_utils: Log probability computation utilities.
+"""
+
 import warnings
 from collections import defaultdict
 from contextlib import nullcontext

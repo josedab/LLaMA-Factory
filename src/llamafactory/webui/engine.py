@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide the central engine for managing WebUI behavior and state.
+
+This module implements the Engine class that orchestrates all WebUI operations.
+It coordinates the Manager (component tracking), Runner (training execution),
+and WebChatModel (inference) to provide a unified interface for the web
+application. The engine handles initialization, state restoration, and
+language switching for the entire UI.
+
+Key Classes:
+    Engine: Central controller for WebUI that manages components, training
+        runners, and chat models. Handles UI initialization and updates.
+
+Example:
+    >>> from llamafactory.webui.engine import Engine
+    >>> # Create engine for full WebUI
+    >>> engine = Engine(demo_mode=False, pure_chat=False)
+    >>> # Access managed components
+    >>> lang_elem = engine.manager.get_elem_by_id("top.lang")
+    >>> # Resume previous session state
+    >>> for updates in engine.resume():
+    ...     yield updates
+    >>> # Change UI language
+    >>> updates = engine.change_lang("zh")
+
+See Also:
+    llamafactory.webui.manager.Manager: Component registration and lookup.
+    llamafactory.webui.runner.Runner: Training process management.
+    llamafactory.webui.chatter.WebChatModel: Chat inference handling.
+    llamafactory.webui.interface: Creates Engine for UI construction.
+"""
+
 from typing import TYPE_CHECKING, Any
 
 from .chatter import WebChatModel

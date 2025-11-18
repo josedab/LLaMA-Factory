@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Define formatters for constructing chat template slots.
+
+This module provides formatter classes that transform message content into
+template slots for tokenization. Formatters handle placeholder substitution,
+tool/function call formatting, and slot generation for different message types.
+They are used by Template to construct the actual token sequences.
+
+Key Classes and Functions:
+    Formatter: Abstract base class for all formatters.
+    EmptyFormatter: Formatter for static content without placeholders.
+    StringFormatter: Formatter with placeholder substitution (e.g., {{content}}).
+    FunctionFormatter: Formatter for function/tool call messages.
+    ToolFormatter: Formatter for tool definitions in system prompts.
+
+Example:
+    >>> from llamafactory.data.formatter import StringFormatter, ToolFormatter
+    >>> # Create a user message formatter
+    >>> user_formatter = StringFormatter(slots=["User: {{content}}\\n"])
+    >>> slots = user_formatter.apply(content="Hello, world!")
+    >>> # Result: ["User: Hello, world!\\n"]
+    >>> # Create a tool formatter
+    >>> tool_formatter = ToolFormatter(slots=["{{content}}"], tool_format="default")
+    >>> slots = tool_formatter.apply(content='[{"name": "search", ...}]')
+
+See Also:
+    llamafactory.data.template: Template class that uses formatters.
+    llamafactory.data.tool_utils: Tool utilities for function call handling.
+    llamafactory.data.data_utils: SLOTS type definition.
+"""
+
 import json
 import re
 from abc import ABC, abstractmethod

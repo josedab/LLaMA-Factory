@@ -12,6 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build the training configuration tab with comprehensive options.
+
+This module creates the most complex UI tab containing all training parameters.
+It includes dataset configuration, hyperparameters, training methods (LoRA,
+freeze, full), optimization techniques (GaLore, Apollo, BAdam), RLHF settings,
+multimodal options, DeepSpeed configuration, and experiment tracking
+integration.
+
+Key Functions:
+    create_train_tab: Build complete training tab with all configuration
+        accordions, parameter controls, and action buttons.
+
+Example:
+    >>> from llamafactory.webui.components.train import create_train_tab
+    >>> from llamafactory.webui.engine import Engine
+    >>> engine = Engine()
+    >>> # Create training tab
+    >>> train_elems = create_train_tab(engine)
+    >>> engine.manager.add_elems("train", train_elems)
+    >>> # train_elems includes extensive configuration options:
+    >>> # - Basic: training_stage, dataset_dir, dataset, learning_rate, etc.
+    >>> # - Extra: logging_steps, packing, train_on_prompt, etc.
+    >>> # - Method-specific: lora_rank, freeze_layers, rlhf params, etc.
+    >>> # - Advanced: galore, apollo, badam, swanlab, deepspeed, etc.
+    >>> # - Controls: start_btn, stop_btn, loss_viewer, progress_bar
+
+See Also:
+    llamafactory.webui.runner.Runner: Executes training with these configs.
+    llamafactory.webui.control: Functions for dynamic UI updates.
+    llamafactory.webui.components.data: Dataset preview in training tab.
+    llamafactory.extras.constants.TRAINING_STAGES: Available training stages.
+"""
+
 from typing import TYPE_CHECKING
 
 from transformers.trainer_utils import SchedulerType

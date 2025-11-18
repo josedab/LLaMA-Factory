@@ -40,6 +40,60 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""Implement Muon optimizer with Newton-Schulz orthogonalization.
+
+This module provides the Muon (MomentUm Orthogonalized by Newton-schulz) optimizer
+which runs standard SGD-momentum internally and performs an orthogonalization
+post-processing step. This approach achieves faster convergence by replacing
+each 2D parameter update with its nearest orthogonal matrix.
+
+The orthogonalization is efficiently computed using a Newton-Schulz iteration
+that can be stably run in bfloat16 on GPU, making it practical for large-scale
+language model training.
+
+Key Classes:
+    Muon: PyTorch optimizer that combines Muon for 2D parameters with AdamW
+        for 1D parameters, embeddings, and LM heads.
+
+Key Functions:
+    zeropower_via_newtonschulz5: Compute the orthogonalization of a matrix
+        using quintic Newton-Schulz iteration.
+
+Example:
+    Basic usage::
+
+        from llamafactory.third_party.muon.muon import Muon
+
+        # Separate parameters for Muon and AdamW
+        muon_params = [p for p in model.parameters() if p.ndim == 2]
+        adamw_params = [p for p in model.parameters() if p.ndim != 2]
+
+        optimizer = Muon(
+            lr=0.02,
+            muon_params=muon_params,
+            adamw_params=adamw_params,
+            momentum=0.95,
+            nesterov=True,
+            ns_steps=5
+        )
+
+    Training loop::
+
+        for batch in dataloader:
+            loss = model(batch)
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+
+Note:
+    - Muon may not work well with small batch sizes.
+    - Performance for finetuning pretrained models has not been thoroughly tested.
+    - Parameters are automatically scaled based on their dimensions.
+
+See Also:
+    llamafactory.third_party.muon: Package initialization and exports.
+"""
+
 import math
 
 import torch

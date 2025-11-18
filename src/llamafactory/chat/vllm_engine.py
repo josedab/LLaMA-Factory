@@ -12,6 +12,71 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the vLLM inference engine for high-throughput generation.
+
+This module provides the vLLM-based inference engine, leveraging vLLM's
+PagedAttention and continuous batching for high-throughput text generation.
+vLLM is designed for serving LLMs with optimal memory efficiency and request
+throughput, making it ideal for production deployments.
+
+The engine uses AsyncLLMEngine for non-blocking generation, supports LoRA
+adapters, multimodal inputs (images, videos, audios), and provides streaming
+token generation with configurable sampling parameters.
+
+Key Classes:
+    VllmEngine: Inference engine using vLLM's AsyncLLMEngine.
+
+Key Methods (VllmEngine):
+    chat: Generate complete responses with vLLM optimization.
+    stream_chat: Stream tokens with async iteration.
+    get_scores: Not supported (raises NotImplementedError).
+
+Key Features:
+    - PagedAttention for efficient KV cache management
+    - Continuous batching for optimal GPU utilization
+    - Tensor parallelism for multi-GPU inference
+    - LoRA adapter support with hot-loading
+    - Multimodal generation (images, videos, audios)
+    - Configurable GPU memory utilization
+    - GPTQ quantization support
+
+Usage Example:
+    >>> from llamafactory.chat.vllm_engine import VllmEngine
+    >>> from llamafactory.hparams import (
+    ...     ModelArguments, DataArguments,
+    ...     FinetuningArguments, GeneratingArguments
+    ... )
+    >>>
+    >>> # Initialize with vLLM-specific arguments
+    >>> model_args = ModelArguments(
+    ...     model_name_or_path="meta-llama/Llama-2-7b-chat-hf",
+    ...     vllm_maxlen=4096,
+    ...     vllm_gpu_util=0.9,
+    ...     vllm_enforce_eager=False
+    ... )
+    >>> data_args = DataArguments(template="llama2")
+    >>> finetuning_args = FinetuningArguments(stage="sft")
+    >>> generating_args = GeneratingArguments()
+    >>>
+    >>> engine = VllmEngine(
+    ...     model_args, data_args, finetuning_args, generating_args
+    ... )
+    >>>
+    >>> # Generate multiple sequences
+    >>> import asyncio
+    >>> messages = [{"role": "user", "content": "Tell me a joke."}]
+    >>> responses = asyncio.run(engine.chat(
+    ...     messages, num_return_sequences=3, temperature=0.8
+    ... ))
+    >>> for i, resp in enumerate(responses):
+    ...     print(f"Response {i+1}: {resp.response_text}")
+
+See Also:
+    llamafactory.chat.base_engine: Abstract base class definition.
+    vllm.AsyncLLMEngine: vLLM async engine implementation.
+    vllm.SamplingParams: Sampling configuration for generation.
+"""
+
 import uuid
 from collections.abc import AsyncGenerator, AsyncIterator
 from typing import TYPE_CHECKING, Any, Optional, Union

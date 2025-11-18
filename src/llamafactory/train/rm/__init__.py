@@ -12,6 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Expose reward modeling (RM) workflow for training preference-based reward models.
+
+This package provides the reward modeling workflow for training models to predict
+human preferences using pairwise comparison data (chosen vs rejected responses).
+
+Key Functions:
+    run_rm: Execute the reward modeling workflow with specified arguments.
+
+Example:
+    >>> from llamafactory.train.rm import run_rm
+    >>> run_rm(model_args, data_args, training_args, finetuning_args, callbacks)
+
+See Also:
+    - llamafactory.train.rm.workflow: Full reward modeling workflow implementation.
+    - llamafactory.train.rm.trainer: Pairwise trainer for reward modeling.
+    - llamafactory.train.rm.metric: Accuracy metrics for reward prediction.
+    - llamafactory.train.tuner: Main training orchestration.
+"""
+
 from .workflow import run_rm
 
 

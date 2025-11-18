@@ -15,6 +15,64 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide the main chat interface and CLI runner for LLM interactions.
+
+This module serves as the primary entry point for chat-based interactions with
+language models in LLaMA-Factory. It provides the ChatModel class which wraps
+various inference engines (HuggingFace, vLLM, SGLang, KTransformers) behind a
+unified synchronous and asynchronous API, making it easy to switch backends
+without changing application code.
+
+The module also includes a command-line interface (CLI) runner for interactive
+chat sessions, supporting multi-turn conversations with history management.
+
+Key Classes:
+    ChatModel: Unified interface for chat model interactions.
+
+Key Functions:
+    run_chat: Launch an interactive CLI chat session.
+
+Key Methods (ChatModel):
+    chat: Synchronous chat completion.
+    achat: Asynchronous chat completion.
+    stream_chat: Synchronous streaming response.
+    astream_chat: Asynchronous streaming response.
+    get_scores: Synchronous reward model scoring.
+    aget_scores: Asynchronous reward model scoring.
+
+Usage Example:
+    >>> from llamafactory.chat import ChatModel
+    >>>
+    >>> # Initialize with configuration dictionary
+    >>> args = {
+    ...     "model_name_or_path": "meta-llama/Llama-2-7b-chat-hf",
+    ...     "template": "llama2",
+    ...     "infer_backend": "huggingface"
+    ... }
+    >>> chat_model = ChatModel(args)
+    >>>
+    >>> # Synchronous chat
+    >>> messages = [{"role": "user", "content": "What is machine learning?"}]
+    >>> responses = chat_model.chat(messages)
+    >>> print(responses[0].response_text)
+    >>>
+    >>> # Asynchronous streaming
+    >>> import asyncio
+    >>> async def stream():
+    ...     async for token in chat_model.astream_chat(messages):
+    ...         print(token, end="")
+    >>> asyncio.run(stream())
+    >>>
+    >>> # Run interactive CLI
+    >>> from llamafactory.chat.chat_model import run_chat
+    >>> run_chat()
+
+See Also:
+    llamafactory.chat.base_engine: Abstract engine interface definition.
+    llamafactory.hparams.get_infer_args: Inference argument parser.
+    llamafactory.extras.misc.torch_gc: GPU memory cleanup utility.
+"""
+
 import asyncio
 import os
 from collections.abc import AsyncGenerator, Generator

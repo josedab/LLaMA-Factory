@@ -12,6 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define main entry points for creating and launching the LLaMA Factory WebUI.
+
+This module provides the primary functions for building and running the web
+interface. It supports both the full-featured training UI with all tabs
+(Train, Evaluate, Chat, Export) and a simplified chat-only demo mode.
+The interface is built on Gradio and integrates all WebUI components.
+
+Key Functions:
+    create_ui: Build the complete Gradio Blocks interface with all tabs.
+    create_web_demo: Build a simplified chat-only web demo interface.
+    run_web_ui: Launch the full WebUI server with default settings.
+    run_web_demo: Launch the chat-only demo server with default settings.
+
+Example:
+    >>> from llamafactory.webui.interface import run_web_ui, create_ui
+    >>> # Launch the full WebUI (blocking call)
+    >>> run_web_ui()
+    >>> # Or create the UI without launching for customization
+    >>> demo = create_ui(demo_mode=False)
+    >>> demo.queue().launch(share=True)
+    >>> # For chat-only demo
+    >>> from llamafactory.webui.interface import run_web_demo
+    >>> run_web_demo()
+
+See Also:
+    llamafactory.webui.engine.Engine: Core engine used by interface.
+    llamafactory.webui.components: UI component builders for each tab.
+    llamafactory.webui.css.CSS: Custom styles applied to the interface.
+"""
+
 import os
 import platform
 

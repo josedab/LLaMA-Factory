@@ -15,6 +15,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement custom PPO trainer for RLHF with advanced features.
+
+This module extends TRL's PPOTrainer with custom training loops, optimizer creation,
+reward computation (API, LoRA, full model), and support for DeepSpeed/FSDP
+distributed training.
+
+Key Classes:
+    CustomPPOTrainer: Extended PPOTrainer with custom training loop and reward models.
+
+Example:
+    >>> from llamafactory.train.ppo.trainer import CustomPPOTrainer
+    >>> trainer = CustomPPOTrainer(
+    ...     model_args=model_args,
+    ...     training_args=training_args,
+    ...     finetuning_args=finetuning_args,
+    ...     generating_args=generating_args,
+    ...     callbacks=callbacks,
+    ...     model=model,
+    ...     reward_model=reward_model,
+    ...     ref_model=ref_model,
+    ...     **tokenizer_module
+    ... )
+    >>> trainer.ppo_train()
+
+See Also:
+    - trl.PPOTrainer: Base PPO trainer class.
+    - llamafactory.train.ppo.workflow: PPO workflow using this trainer.
+    - llamafactory.train.ppo.ppo_utils: Utility functions for reward computation.
+    - llamafactory.train.trainer_utils: Reference and reward model creation.
+"""
+
 import math
 import os
 import sys

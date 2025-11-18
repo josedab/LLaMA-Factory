@@ -12,6 +12,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define the abstract base class for inference engines.
+
+This module provides the foundational interface that all inference engine
+implementations must follow. It defines the common contract for chat-based
+text generation, streaming responses, and reward model scoring. Each engine
+implementation (HuggingFace, vLLM, SGLang, KTransformers) inherits from
+BaseEngine and provides backend-specific optimizations while maintaining
+API compatibility.
+
+The module also defines the Response dataclass for standardized output format
+across all engines, containing response text, token counts, and finish reasons.
+
+Key Classes:
+    Response: Dataclass containing generation output and metadata.
+    BaseEngine: Abstract base class for all inference engine implementations.
+
+Key Methods (BaseEngine):
+    chat: Generate complete responses for given messages.
+    stream_chat: Stream response tokens incrementally.
+    get_scores: Compute reward model scores for input texts.
+
+Usage Example:
+    >>> from llamafactory.chat.base_engine import BaseEngine, Response
+    >>>
+    >>> # Custom engine implementation
+    >>> class CustomEngine(BaseEngine):
+    ...     async def chat(self, messages, system=None, tools=None,
+    ...                    images=None, videos=None, audios=None, **kwargs):
+    ...         # Implementation here
+    ...         return [Response(
+    ...             response_text="Hello!",
+    ...             response_length=1,
+    ...             prompt_length=10,
+    ...             finish_reason="stop"
+    ...         )]
+    ...
+    ...     async def stream_chat(self, messages, **kwargs):
+    ...         yield "Hello!"
+    ...
+    ...     async def get_scores(self, batch_input, **kwargs):
+    ...         return [0.5] * len(batch_input)
+
+See Also:
+    llamafactory.chat.hf_engine: HuggingFace Transformers implementation.
+    llamafactory.chat.vllm_engine: vLLM high-throughput implementation.
+    llamafactory.chat.sglang_engine: SGLang optimized implementation.
+    llamafactory.chat.kt_engine: KTransformers implementation.
+"""
+
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass

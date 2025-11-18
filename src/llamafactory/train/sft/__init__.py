@@ -12,6 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Expose supervised fine-tuning (SFT) workflow for instruction-following models.
+
+This package provides the supervised fine-tuning workflow for training language
+models to follow instructions using input-output pairs with custom metrics like
+accuracy, BLEU, and ROUGE scores.
+
+Key Functions:
+    run_sft: Execute the supervised fine-tuning workflow with specified arguments.
+
+Example:
+    >>> from llamafactory.train.sft import run_sft
+    >>> run_sft(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
+
+See Also:
+    - llamafactory.train.sft.workflow: Full SFT workflow implementation.
+    - llamafactory.train.sft.trainer: Custom Seq2Seq trainer for SFT.
+    - llamafactory.train.sft.metric: Evaluation metrics (accuracy, similarity).
+    - llamafactory.train.tuner: Main training orchestration.
+"""
+
 from .workflow import run_sft
 
 

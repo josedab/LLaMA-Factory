@@ -11,6 +11,41 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+r"""
+Convert datasets from various formats to a standardized internal format.
+
+This module provides converters that transform datasets from different source
+formats (Alpaca, ShareGPT, OpenAI) into a unified internal representation.
+The standardized format uses a consistent structure with _prompt, _response,
+_system, _tools, and media fields that can be processed by downstream components.
+
+Key Classes and Functions:
+    DatasetConverter: Abstract base class for dataset converters.
+    AlpacaDatasetConverter: Convert Alpaca-style instruction datasets.
+    SharegptDatasetConverter: Convert ShareGPT-style conversation datasets.
+    OpenAIDatasetConverter: Convert OpenAI-style message datasets.
+    align_dataset: Apply converter to transform entire dataset.
+    get_dataset_converter: Factory function to get converter by name.
+    register_dataset_converter: Register custom dataset converters.
+    DATASET_CONVERTERS: Registry of available dataset converters.
+
+Example:
+    >>> from llamafactory.data.converter import align_dataset
+    >>> aligned_dataset = align_dataset(
+    ...     dataset=raw_dataset,
+    ...     dataset_attr=dataset_attr,
+    ...     data_args=data_args,
+    ...     training_args=training_args
+    ... )
+    >>> # Result has standardized fields: _prompt, _response, _system, etc.
+
+See Also:
+    llamafactory.data.parser: Dataset attribute parsing and configuration.
+    llamafactory.data.loader: Dataset loading that uses converters.
+    llamafactory.data.data_utils: Role enumeration used in message formatting.
+"""
+
 import json
 import os
 from abc import abstractmethod

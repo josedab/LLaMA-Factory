@@ -37,6 +37,48 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""Implement the core evaluation logic for language model benchmarking.
+
+This module provides the Evaluator class which orchestrates the entire evaluation
+pipeline for language models on multiple-choice benchmarks. It handles model and
+tokenizer loading, dataset preparation, batch inference with efficient batching,
+and results aggregation across subject categories.
+
+The evaluation follows a few-shot learning paradigm where examples from the
+training set are used as demonstrations before the test question. Results are
+computed as accuracy percentages across different subject categories (STEM,
+Humanities, Social Sciences, etc.).
+
+Key Classes:
+    Evaluator: Main class that manages the evaluation workflow including model
+        loading, batch inference, and metrics computation.
+
+Key Functions:
+    run_eval: Convenience function to instantiate and run the Evaluator.
+
+Example:
+    Run evaluation with default settings::
+
+        from llamafactory.eval.evaluator import run_eval
+        run_eval()
+
+    Run evaluation with custom configuration::
+
+        from llamafactory.eval.evaluator import Evaluator
+        evaluator = Evaluator(args={
+            "model_name_or_path": "meta-llama/Llama-2-7b-hf",
+            "task": "mmlu_test",
+            "n_shot": 5,
+            "batch_size": 8
+        })
+        evaluator.eval()
+
+See Also:
+    llamafactory.eval.template: Evaluation prompt templates for different languages.
+    llamafactory.hparams.get_eval_args: Argument parsing for evaluation.
+    llamafactory.model: Model and tokenizer loading utilities.
+"""
+
 import json
 import os
 from typing import TYPE_CHECKING, Any, Optional

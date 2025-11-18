@@ -15,6 +15,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide environment information and version detection for LLaMA-Factory.
+
+This module contains version information and utilities for displaying
+the current environment configuration, including Python version, PyTorch
+version, hardware information, and installed package versions. It is
+primarily used for debugging and issue reporting.
+
+Constants:
+    VERSION: Current version string of LLaMA-Factory.
+
+Functions:
+    print_env: Display comprehensive environment information.
+
+Example:
+    Print environment information for debugging::
+
+        from llamafactory.extras.env import VERSION, print_env
+
+        # Check current version
+        print(f"LLaMA-Factory version: {VERSION}")
+
+        # Print full environment details
+        print_env()
+        # Output includes:
+        # - LLaMA-Factory version
+        # - Platform and Python version
+        # - PyTorch, Transformers, Datasets versions
+        # - GPU/NPU type, memory, and count
+        # - Optional packages (DeepSpeed, vLLM, etc.)
+
+See Also:
+    llamafactory.extras.packages: Package availability checking.
+    llamafactory.extras.misc: Device and memory utilities.
+"""
+
 
 from collections import OrderedDict
 

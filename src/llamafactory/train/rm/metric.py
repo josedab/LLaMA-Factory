@@ -12,6 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide evaluation metrics for reward model training.
+
+This module implements the accuracy metric for reward modeling, measuring
+how often the model correctly ranks chosen responses above rejected ones
+with support for HuggingFace's batch evaluation protocol.
+
+Key Classes:
+    ComputeAccuracy: Compute reward prediction accuracy with batch evaluation support.
+
+Example:
+    >>> from llamafactory.train.rm.metric import ComputeAccuracy
+    >>> compute_metrics = ComputeAccuracy()
+    >>> trainer = PairwiseTrainer(compute_metrics=compute_metrics, ...)
+    >>> # Accuracy measures: chosen_score > rejected_score
+
+See Also:
+    - llamafactory.train.rm.trainer: Trainer that uses this metric.
+    - llamafactory.train.rm.workflow: Workflow that configures this metric.
+"""
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional
 

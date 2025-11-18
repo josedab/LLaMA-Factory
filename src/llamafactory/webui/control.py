@@ -12,6 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide UI control functions for dynamic component updates in WebUI.
+
+This module implements callback functions that respond to user interactions
+in the Gradio interface. It handles model selection, quantization settings,
+checkpoint listing, dataset management, and training progress monitoring.
+These functions update UI components based on user selections and system state.
+
+Key Functions:
+    switch_hub: Switch between model hubs (HuggingFace, ModelScope, OpenMind).
+    can_quantize: Check if quantization is available for a finetuning type.
+    can_quantize_to: Get available quantization bits for a method.
+    change_stage: Update UI state when training stage changes.
+    get_model_info: Retrieve model path and template for a model name.
+    check_template: Warn if using default template with an instruct model.
+    get_trainer_info: Get training progress information for monitoring.
+    list_checkpoints: List available checkpoints for a model.
+    list_config_paths: List saved configuration files.
+    list_datasets: List available datasets for a training stage.
+    list_output_dirs: List directories that can resume training.
+
+Example:
+    >>> from llamafactory.webui.control import get_model_info, list_checkpoints
+    >>> # Get model information when user selects a model
+    >>> model_path, template = get_model_info("Llama-3-8B-Chat")
+    >>> print(f"Path: {model_path}, Template: {template}")
+    >>> # List available checkpoints for the model
+    >>> checkpoint_dropdown = list_checkpoints("Llama-3-8B-Chat", "lora")
+    >>> # Monitor training progress
+    >>> from llamafactory.webui.control import get_trainer_info
+    >>> log, progress, info = get_trainer_info("en", "/path/to/output", do_train=True)
+
+See Also:
+    llamafactory.webui.components.top: Top component that uses these controls.
+    llamafactory.webui.components.train: Training tab using control functions.
+    llamafactory.webui.runner.Runner: Training runner that generates monitored output.
+"""
+
 import json
 import os
 from typing import Any, Optional

@@ -12,6 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Expose Direct Preference Optimization (DPO) workflow for preference alignment.
+
+This package provides the DPO workflow for aligning language models with human
+preferences using direct optimization on preference pairs, supporting various
+loss types including DPO, IPO, ORPO, SimPO, and BCO.
+
+Key Functions:
+    run_dpo: Execute the DPO training workflow with specified arguments.
+
+Example:
+    >>> from llamafactory.train.dpo import run_dpo
+    >>> run_dpo(model_args, data_args, training_args, finetuning_args, callbacks)
+
+See Also:
+    - llamafactory.train.dpo.workflow: Full DPO workflow implementation.
+    - llamafactory.train.dpo.trainer: Custom DPO trainer extending TRL.
+    - llamafactory.train.tuner: Main training orchestration.
+"""
+
 from .workflow import run_dpo
 
 

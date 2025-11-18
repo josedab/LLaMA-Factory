@@ -15,6 +15,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide custom logging system with rank-aware logging for distributed training.
+
+This module implements a custom logging system for LLaMA-Factory that supports
+distributed training scenarios. It provides rank-aware logging methods that
+only output messages from the main process (rank 0), preventing duplicate
+log messages in multi-GPU or multi-node training setups.
+
+The logging level can be controlled via the LLAMAFACTORY_VERBOSITY environment
+variable (DEBUG, INFO, WARNING, ERROR, CRITICAL).
+
+Classes:
+    LoggerHandler: Custom handler that writes logs to file for LLaMA Board.
+    _Logger: Extended Logger class with rank-aware logging methods.
+
+Functions:
+    get_logger: Retrieve a logger instance with the specified name.
+    add_handler: Add a handler to the root logger.
+    remove_handler: Remove a handler from the root logger.
+    info_rank0: Log info message only from rank 0 process.
+    warning_rank0: Log warning message only from rank 0 process.
+    warning_rank0_once: Log warning message only once from rank 0 process.
+
+Example:
+    Set up and use rank-aware logging::
+
+        from llamafactory.extras import logging
+
+        # Get a logger for your module
+        logger = logging.get_logger(__name__)
+
+        # Standard logging (all ranks)
+        logger.info("This appears on all ranks")
+
+        # Rank-aware logging (only rank 0)
+        logger.info_rank0("This appears only on rank 0")
+        logger.warning_rank0("Warning from main process only")
+
+        # One-time warning (cached, only shows once)
+        logger.warning_rank0_once("This warning appears only once")
+
+        # Add custom handler for file logging
+        handler = logging.LoggerHandler(output_dir="./logs")
+        logging.add_handler(handler)
+
+See Also:
+    llamafactory.extras.constants: Contains RUNNING_LOG constant.
+    logging: Python standard library logging module.
+"""
+
 import logging
 import os
 import sys

@@ -12,6 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Provide utilities for tool and function calling support.
+
+This module implements tool formatting and extraction utilities for different
+model families that support function calling. It handles formatting tool
+definitions for system prompts, formatting function call messages, and
+extracting function calls from model outputs.
+
+Key Classes and Functions:
+    FunctionCall: NamedTuple representing a function call (name, arguments).
+    ToolUtils: Abstract base class for tool utilities.
+    get_tool_utils: Factory function to get tool utils by name.
+    TOOLS: Registry of available tool utilities.
+    Model-specific tool utilities:
+        - DefaultToolUtils: Default tool format.
+        - GLM4ToolUtils: GLM-4 specific format.
+        - Llama3ToolUtils: LLaMA 3.x specific format.
+        - MistralToolUtils: Mistral v0.3 specific format.
+        - QwenToolUtils: Qwen 2.5 specific format.
+        - SeedToolUtils: Seed model specific format.
+        - LingToolUtils: Ling v2 specific format.
+
+Example:
+    >>> from llamafactory.data.tool_utils import get_tool_utils, FunctionCall
+    >>> # Get tool utilities for Qwen
+    >>> tool_utils = get_tool_utils("qwen")
+    >>> # Format tools for system prompt
+    >>> tools = [{"name": "search", "description": "Search the web", "parameters": {...}}]
+    >>> tool_text = tool_utils.tool_formatter(tools)
+    >>> # Format function calls
+    >>> calls = [FunctionCall("search", '{"query": "weather"}')]
+    >>> call_text = tool_utils.function_formatter(calls)
+    >>> # Extract function calls from response
+    >>> extracted = tool_utils.tool_extractor(model_output)
+
+See Also:
+    llamafactory.data.formatter: FunctionFormatter and ToolFormatter classes.
+    llamafactory.data.template: Templates that use tool utilities.
+"""
+
 import json
 import re
 from abc import ABC, abstractmethod

@@ -11,6 +11,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Implement NPU-optimized RMSNorm kernel.
+
+This module provides the NpuRMSNormKernel class which replaces standard RMSNorm
+forward methods with NPU-optimized implementations using torch_npu.npu_rms_norm.
+The kernel automatically detects RMSNorm modules in the model and replaces their
+forward methods.
+
+Key Classes:
+    NpuRMSNormKernel: MetaRMSNormKernel implementation that applies NPU-optimized
+        normalization to matching RMSNorm modules.
+
+Key Functions:
+    _npu_rms_forward: NPU-optimized forward function for RMSNorm modules that
+        maintains numerical consistency with baseline behavior.
+
+Example:
+    Apply RMSNorm kernel to a model::
+
+        from llamafactory.v1.plugins.model_plugins.kernels.rms_norm.npu_rms_norm import (
+            NpuRMSNormKernel
+        )
+        from llamafactory.v1.plugins.model_plugins.kernels.registry import apply_kernel
+
+        model = apply_kernel(model, NpuRMSNormKernel)
+
+See Also:
+    llamafactory.v1.plugins.model_plugins.kernels.registry: MetaRMSNormKernel base.
+    llamafactory.v1.plugins.model_plugins.kernels.constants: KernelType.RMSNORM.
+"""
+
 import re
 import types
 

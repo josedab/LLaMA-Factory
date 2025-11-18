@@ -12,6 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Orchestrate training and model export for all LLaMA-Factory training stages.
+
+This module serves as the main entry point for LLaMA-Factory training, providing
+functions to run experiments across different training stages (PT, SFT, RM, PPO,
+DPO, KTO) and export trained models. It handles argument parsing, callback setup,
+distributed training coordination, and stage-specific workflow dispatching.
+
+Key Functions:
+    run_exp: Main entry point to run training experiments with specified arguments.
+    export_model: Export trained models with optional adapter merging and quantization.
+    _training_function: Internal function that dispatches to stage-specific workflows.
+
+Example:
+    >>> from llamafactory.train.tuner import run_exp, export_model
+    >>> # Run supervised fine-tuning
+    >>> run_exp(args={"stage": "sft", "model_name_or_path": "meta-llama/Llama-2-7b"})
+    >>> # Export model with merged adapters
+    >>> export_model(args={"model_name_or_path": "path/to/model", "export_dir": "output"})
+
+See Also:
+    - llamafactory.train.pt.workflow: Pre-training workflow.
+    - llamafactory.train.sft.workflow: Supervised fine-tuning workflow.
+    - llamafactory.train.dpo.workflow: Direct preference optimization workflow.
+    - llamafactory.train.ppo.workflow: Proximal policy optimization workflow.
+    - llamafactory.hparams: Argument dataclasses for training configuration.
+"""
+
 import os
 import shutil
 from typing import TYPE_CHECKING, Any, Optional

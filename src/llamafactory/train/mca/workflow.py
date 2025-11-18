@@ -11,7 +11,31 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""MCA (mcore_adapter) workflows for PT/SFT/DPO stages, aligned with LLaMA-Factory's workflow style."""
+
+"""Implement MCore Adapter workflows for high-performance Megatron-Core training.
+
+This module provides training workflows using the mcore_adapter library for
+Megatron-Core based training, supporting tensor/pipeline/expert model parallelism
+for PT, SFT, and DPO stages with optimized data collation.
+
+Key Functions:
+    run_pt: Execute pre-training workflow with MCore Adapter.
+    run_sft: Execute supervised fine-tuning workflow with MCore Adapter.
+    run_dpo: Execute direct preference optimization workflow with MCore Adapter.
+
+Example:
+    >>> from llamafactory.train.mca.workflow import run_sft, run_dpo
+    >>> # Run SFT with Megatron-Core
+    >>> run_sft(model_args, data_args, training_args, finetuning_args)
+    >>> # Run DPO with Megatron-Core
+    >>> run_dpo(model_args, data_args, training_args, finetuning_args)
+
+See Also:
+    - mcore_adapter.trainer.McaTrainer: MCore Adapter trainer for PT/SFT.
+    - mcore_adapter.trainer.DPOTrainer: MCore Adapter DPO trainer.
+    - llamafactory.train.tuner: Main entry point that calls these workflows.
+    - llamafactory.extras.constants.MCA_SUPPORTED_MODELS: Supported model types.
+"""
 
 from __future__ import annotations
 

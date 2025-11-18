@@ -17,6 +17,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide utility functions and classes for trainer customization.
+
+This module contains utilities for creating custom optimizers (GaLore, APOLLO,
+LoRA+, BAdam, Adam-mini, Muon), custom schedulers, reference models, reward
+models, and various helper functions for loss computation and logging integration.
+
+Key Functions:
+    create_custom_optimizer: Create optimizers for advanced training algorithms.
+    create_custom_scheduler: Create custom learning rate schedulers.
+    create_ref_model: Create reference models for PPO/DPO training.
+    create_reward_model: Create reward models for PPO training.
+    get_batch_logps: Compute log probabilities for preference learning.
+    create_modelcard_and_push: Create model cards and push to HuggingFace Hub.
+    get_swanlab_callback: Get SwanLab integration callback.
+    get_ray_trainer: Create Ray trainer for distributed training.
+
+Key Classes:
+    DummyOptimizer: Placeholder optimizer for layerwise GaLore/APOLLO algorithms.
+
+Example:
+    >>> from llamafactory.train.trainer_utils import create_custom_optimizer
+    >>> optimizer = create_custom_optimizer(model, training_args, finetuning_args)
+    >>> if optimizer is None:
+    ...     # Fall back to default optimizer
+    ...     optimizer = AdamW(model.parameters(), lr=training_args.learning_rate)
+
+See Also:
+    - llamafactory.train.pt.trainer: Pre-training trainer using these utilities.
+    - llamafactory.train.sft.trainer: SFT trainer using these utilities.
+    - llamafactory.train.dpo.trainer: DPO trainer using these utilities.
+"""
+
 import json
 import os
 from collections.abc import Mapping

@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build dataset preview components for viewing training data samples.
+
+This module creates a modal dialog for previewing dataset contents with
+pagination support. It loads data from local files and displays samples
+in JSON format, allowing users to inspect their training data before
+starting a job.
+
+Key Functions:
+    prev_page: Navigate to previous page of samples.
+    next_page: Navigate to next page of samples.
+    can_preview: Check if dataset supports preview (local file exists).
+    get_preview: Load and return samples for current page.
+    create_preview_box: Build complete preview dialog with controls.
+
+Example:
+    >>> from llamafactory.webui.components.data import create_preview_box
+    >>> import gradio as gr
+    >>> # Create dataset selection components
+    >>> dataset_dir = gr.Textbox(value="data")
+    >>> dataset = gr.Dropdown(multiselect=True)
+    >>> # Create preview box linked to dataset selection
+    >>> preview_elems = create_preview_box(dataset_dir, dataset)
+    >>> # preview_elems includes: data_preview_btn, preview_count,
+    >>> # page_index, prev_btn, next_btn, close_btn, preview_samples
+
+See Also:
+    llamafactory.webui.components.train: Training tab uses preview box.
+    llamafactory.webui.components.eval: Evaluation tab uses preview box.
+    llamafactory.webui.common.load_dataset_info: Loads dataset metadata.
+"""
+
 import json
 import os
 from typing import TYPE_CHECKING, Any

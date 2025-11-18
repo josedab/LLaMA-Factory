@@ -12,6 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Process datasets for supervised fine-tuning (SFT).
+
+This module implements dataset processors for supervised fine-tuning, including
+support for multi-turn conversations, sequence packing, and multimodal inputs.
+It handles the creation of input_ids and labels with appropriate masking for
+the prompt portions.
+
+Key Classes and Functions:
+    SupervisedDatasetProcessor: Standard processor for SFT data.
+    PackedSupervisedDatasetProcessor: SFT processor with sequence packing for efficiency.
+
+Example:
+    >>> from llamafactory.data.processor.supervised import SupervisedDatasetProcessor
+    >>> processor = SupervisedDatasetProcessor(
+    ...     template=template,
+    ...     tokenizer=tokenizer,
+    ...     processor=mm_processor,
+    ...     data_args=data_args
+    ... )
+    >>> model_inputs = processor.preprocess_dataset(examples)
+    >>> # Outputs include: input_ids, attention_mask, labels, images, videos, audios
+
+See Also:
+    llamafactory.data.processor.processor_utils: Base DatasetProcessor and utilities.
+    llamafactory.data.collator: SFTDataCollatorWith4DAttentionMask for packing.
+    llamafactory.train.sft: Supervised fine-tuning workflow.
+"""
+
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Optional

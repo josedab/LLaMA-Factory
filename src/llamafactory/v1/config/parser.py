@@ -12,6 +12,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement argument parsing for v1 configuration.
+
+This module provides the argument parsing functionality for LLaMA Factory v1,
+supporting multiple configuration input formats including YAML files, JSON files,
+command-line arguments, and Python dictionaries. It uses HuggingFace's
+HfArgumentParser for robust argument handling with automatic type validation.
+
+The parser supports configuration overrides through OmegaConf, allowing users
+to specify base configurations in files and override specific parameters via
+command-line arguments.
+
+Key Functions:
+    get_args: Main parsing function that returns all argument dataclasses
+        from the specified input source.
+
+Example:
+    Parse from YAML config file::
+
+        # Command line: python train.py config.yaml learning_rate=1e-4
+        from llamafactory.v1.config.parser import get_args
+
+        data_args, model_args, training_args, sample_args = get_args()
+
+    Parse from dictionary::
+
+        args = {"model": "llama-7b", "dataset": "alpaca"}
+        data_args, model_args, training_args, sample_args = get_args(args)
+
+    Parse from command-line list::
+
+        args = ["--model", "llama-7b", "--dataset", "alpaca"]
+        data_args, model_args, training_args, sample_args = get_args(args)
+
+See Also:
+    llamafactory.v1.config.data_args: DataArguments definition.
+    llamafactory.v1.config.model_args: ModelArguments definition.
+    llamafactory.v1.config.training_args: TrainingArguments definition.
+    llamafactory.v1.config.sample_args: SampleArguments definition.
+"""
 
 import json
 import sys

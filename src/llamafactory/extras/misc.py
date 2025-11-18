@@ -15,6 +15,76 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide miscellaneous utility functions for LLaMA-Factory.
+
+This module contains various utility functions for device management,
+memory operations, version checking, model parameter counting, and
+other common operations used throughout LLaMA-Factory. It supports
+multiple hardware backends including CUDA, NPU, XPU, and MPS.
+
+Classes:
+    AverageMeter: Utility class for computing and storing running averages.
+
+Functions:
+    check_version: Check if a package meets version requirements.
+    check_dependencies: Verify all required package versions.
+    calculate_tps: Calculate effective tokens per second during training.
+    count_parameters: Count trainable and total parameters in a model.
+    get_current_device: Get the current available compute device.
+    get_device_count: Get the number of available compute devices.
+    get_logits_processor: Get logits processor that removes NaN/Inf values.
+    get_current_memory: Get available and total memory for current device.
+    get_peak_memory: Get peak memory usage for current device.
+    has_tokenized_data: Check if a path contains tokenized dataset.
+    infer_optim_dtype: Infer optimal dtype based on hardware capabilities.
+    is_accelerator_available: Check if any accelerator (GPU/NPU/etc.) is available.
+    is_env_enabled: Check if an environment variable is enabled.
+    numpify: Convert torch tensor to numpy array.
+    skip_check_imports: Skip import checking for custom models.
+    torch_gc: Perform garbage collection and clear device cache.
+    try_download_model_from_other_hub: Download model from ModelScope or OpenMind.
+    use_modelscope: Check if ModelScope hub is enabled.
+    use_openmind: Check if OpenMind hub is enabled.
+    use_ray: Check if Ray is enabled.
+    use_kt: Check if KTransformers is enabled.
+    find_available_port: Find an available network port.
+    fix_proxy: Fix proxy settings for Gradio UI.
+
+Example:
+    Use device and memory utilities::
+
+        from llamafactory.extras.misc import (
+            get_current_device,
+            get_current_memory,
+            count_parameters,
+            torch_gc,
+            check_dependencies,
+        )
+
+        # Check dependencies on startup
+        check_dependencies()
+
+        # Get current device
+        device = get_current_device()
+        print(f"Using device: {device}")
+
+        # Check memory
+        free, total = get_current_memory()
+        print(f"Memory: {free / 1e9:.2f}GB free / {total / 1e9:.2f}GB total")
+
+        # Count model parameters
+        trainable, total = count_parameters(model)
+        print(f"Parameters: {trainable:,} trainable / {total:,} total")
+
+        # Clear GPU cache
+        torch_gc()
+
+See Also:
+    llamafactory.extras.packages: Package availability checking.
+    llamafactory.extras.env: Environment information.
+    llamafactory.extras.logging: Logging utilities.
+"""
+
 import gc
 import os
 import socket

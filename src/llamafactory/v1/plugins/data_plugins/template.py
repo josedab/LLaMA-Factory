@@ -12,6 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement message templates for v1 data formatting.
+
+This module provides the Template class for rendering messages according to
+model-specific chat formats. Templates define how user, assistant, and system
+messages are formatted before being passed to the model.
+
+Key Classes:
+    Template: Dataclass containing format strings for user, assistant, and
+        system message templates with a render method.
+
+Example:
+    Create and use a template::
+
+        from llamafactory.v1.plugins.data_plugins.template import Template
+
+        template = Template(
+            user_template="User: {content}\\n",
+            assistant_template="Assistant: {content}\\n",
+            system_template="System: {content}\\n"
+        )
+        formatted = template.render_message({"content": "Hello"})
+
+See Also:
+    llamafactory.v1.core.data_engine: Uses templates for data formatting.
+"""
 
 from dataclasses import dataclass
 

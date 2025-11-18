@@ -18,6 +18,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Prepare models for training with gradient checkpointing and precision casting.
+
+This module provides utilities for preparing models before training, including
+gradient checkpointing configuration, layer normalization upcasting, and output
+layer precision management. It includes an optimized Unsloth-style gradient
+checkpointing implementation for reduced VRAM usage.
+
+Key Functions:
+    prepare_model_for_training: Main function to prepare model for training.
+    get_unsloth_gradient_checkpointing_func: Get VRAM-efficient checkpointing.
+    get_custom_gradient_checkpointing_func: Wrap checkpointing for trainable layers only.
+
+Key Features:
+    - Unsloth gradient checkpointing: Offloads activations to CPU for VRAM savings.
+    - Custom gradient checkpointing: Only checkpoints layers with trainable params.
+    - LayerNorm upcasting: Cast normalization layers to float32 for stability.
+    - LM head upcasting: Cast output embeddings to float32 for precision.
+
+Example:
+    >>> from llamafactory.model.model_utils.checkpointing import prepare_model_for_training
+    >>> from transformers import AutoModelForCausalLM
+    >>>
+    >>> model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.disable_gradient_checkpointing = False
+    >>> model_args.use_unsloth_gc = True
+    >>> prepare_model_for_training(model, model_args)
+    >>> # Model now has gradient checkpointing enabled with Unsloth optimization
+
+See Also:
+    llamafactory.model.patcher: Calls prepare_model_for_training in patch_model.
+    llamafactory.model.model_utils.unsloth: Additional Unsloth optimizations.
+"""
+
 import inspect
 from functools import WRAPPER_ASSIGNMENTS, partial, wraps
 from types import MethodType

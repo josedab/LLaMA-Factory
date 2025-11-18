@@ -15,6 +15,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the supervised fine-tuning workflow for instruction-following models.
+
+This module provides the complete SFT pipeline including tokenizer and model loading,
+dataset preparation with 4D attention masks, metric configuration (accuracy, ROUGE,
+BLEU), trainer initialization, training, evaluation, prediction, and model card creation.
+
+Key Functions:
+    run_sft: Execute the complete supervised fine-tuning workflow.
+
+Example:
+    >>> from llamafactory.train.sft.workflow import run_sft
+    >>> from llamafactory.hparams import get_train_args
+    >>> args = get_train_args()
+    >>> run_sft(args.model_args, args.data_args, args.training_args,
+    ...         args.finetuning_args, args.generating_args)
+
+See Also:
+    - llamafactory.train.sft.trainer: Custom trainer used in this workflow.
+    - llamafactory.train.sft.metric: Evaluation metrics used in this workflow.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+    - llamafactory.data.collator: Data collators used for SFT.
+"""
+
 from typing import TYPE_CHECKING, Optional
 
 from ...data import SFTDataCollatorWith4DAttentionMask, get_dataset, get_template_and_fix_tokenizer

@@ -12,6 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the KTransformers SFT workflow for CPU-offloaded training.
+
+This module provides the supervised fine-tuning pipeline using KTransformers
+for efficient training with CPU offloading, enabling training of large models
+on consumer hardware with limited GPU memory.
+
+Key Functions:
+    run_sft: Execute the complete KTransformers SFT workflow.
+
+Example:
+    >>> from llamafactory.train.ksft.workflow import run_sft
+    >>> from llamafactory.hparams import get_train_args
+    >>> args = get_train_args()
+    >>> run_sft(args.model_args, args.data_args, args.training_args,
+    ...         args.finetuning_args, args.generating_args)
+
+See Also:
+    - ktransformers.sft.lora.KTrainer: KTransformers trainer used in this workflow.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+    - llamafactory.data.collator: Data collators used for SFT.
+"""
+
 from typing import TYPE_CHECKING, Optional
 
 from ...data import SFTDataCollatorWith4DAttentionMask, get_dataset, get_template_and_fix_tokenizer

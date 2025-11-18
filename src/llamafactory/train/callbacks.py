@@ -12,6 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide training callbacks for LLaMA-Factory training pipelines.
+
+This module implements custom TrainerCallback classes that extend HuggingFace's
+Trainer functionality with features like valuehead checkpoint fixing, processor
+saving, PiSSA adapter conversion, training progress logging, and external
+experiment tracking integration.
+
+Key Classes:
+    fix_valuehead_checkpoint: Fix checkpoint files for valuehead models.
+    FixValueHeadModelCallback: Callback to fix valuehead checkpoints during saving.
+    SaveProcessorCallback: Callback to save processor alongside model checkpoints.
+    PissaConvertCallback: Callback to convert PiSSA adapters to standard LoRA format.
+    LogCallback: Callback for logging training progress and metrics to files.
+    ReporterCallback: Callback for reporting metrics to external trackers (W&B, SwanLab).
+
+Example:
+    >>> from llamafactory.train.callbacks import LogCallback, PissaConvertCallback
+    >>> callbacks = [LogCallback()]
+    >>> if finetuning_args.pissa_convert:
+    ...     callbacks.append(PissaConvertCallback())
+    >>> trainer = Trainer(model=model, callbacks=callbacks, ...)
+
+See Also:
+    - transformers.TrainerCallback: Base class for all callbacks.
+    - llamafactory.train.tuner: Main training orchestration that uses these callbacks.
+    - llamafactory.train.trainer_utils: Utility functions used by callbacks.
+"""
+
 import json
 import os
 import signal

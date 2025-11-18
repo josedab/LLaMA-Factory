@@ -12,6 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define custom CSS styles for the LLaMA Factory WebUI.
+
+This module contains the CSS stylesheet string that customizes the appearance
+of Gradio components in the web interface. It includes styles for buttons,
+thinking/reasoning display blocks, modal dialogs, and dark mode support.
+
+Key Variables:
+    CSS: Complete CSS stylesheet string for WebUI styling, including:
+        - Duplicate button styling for Hugging Face Spaces
+        - Thinking summary and container styles for reasoning models
+        - Modal box positioning and appearance
+        - Dark mode theme overrides
+
+Example:
+    >>> from llamafactory.webui.css import CSS
+    >>> import gradio as gr
+    >>> # Apply custom CSS to Gradio Blocks
+    >>> with gr.Blocks(css=CSS) as demo:
+    ...     gr.Markdown("# LLaMA Factory")
+    ...     # Add components here
+    >>> demo.launch()
+
+See Also:
+    llamafactory.webui.interface: Main interface that applies this CSS.
+    llamafactory.webui.chatter: Uses thinking-container classes for responses.
+"""
+
 CSS = r"""
 .duplicate-button {
   margin: auto !important;

@@ -17,6 +17,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement LongLoRA shifted sparse attention for extended context training.
+
+This module provides the LongLoRA (Long Low-Rank Adaptation) implementation
+which enables efficient fine-tuning of LLMs on longer contexts. It implements
+the S^2-Attn (Shifted Sparse Attention) mechanism that splits attention heads
+into groups and applies different shifts.
+
+Key Functions:
+    configure_longlora: Enable LongLoRA for supported models.
+    llama_attention_forward: Modified attention forward with shift mechanism.
+    llama_flash_attention_2_forward: FlashAttention-2 version with shifting.
+    llama_sdpa_attention_forward: SDPA version with shifting.
+
+How S^2-Attn Works:
+    1. Split attention heads into two groups.
+    2. Shift the second group by half the group size.
+    3. Compute attention within smaller groups.
+    4. Shift back and concatenate results.
+
+This allows the model to attend to longer contexts while maintaining
+computational efficiency through localized attention patterns.
+
+Supported Models:
+    Models with architectures in SUPPORTED_CLASS_FOR_S2ATTN constant.
+    Requires transformers>=4.45.0,<4.48.0 for attention patching.
+
+Example:
+    >>> from llamafactory.model.model_utils.longlora import configure_longlora
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.shift_attn = True
+    >>> configure_longlora(config, model_args, is_trainable=True)
+    >>> # config.group_size_ratio is now 0.25
+
+See Also:
+    llamafactory.model.patcher: Calls configure_longlora in patch_config.
+    https://arxiv.org/abs/2309.12307: LongLoRA paper.
+"""
+
 import math
 from typing import TYPE_CHECKING, Optional
 

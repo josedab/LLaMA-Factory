@@ -12,4 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide custom trainer extensions for MCore Adapter training.
+
+This module is a placeholder for custom trainer implementations that extend
+the mcore_adapter trainers with LLaMA-Factory specific features.
+
+Key Classes:
+    (Planned) Custom MCA trainer extensions.
+
+Example:
+    >>> # Future usage:
+    >>> from llamafactory.train.mca.trainer import CustomMcaTrainer
+    >>> trainer = CustomMcaTrainer(model=model, args=training_args, ...)
+
+See Also:
+    - mcore_adapter.trainer.McaTrainer: Base MCA trainer class.
+    - llamafactory.train.mca.workflow: MCA workflows using trainers.
+"""
+
 # TODO override the original trainer

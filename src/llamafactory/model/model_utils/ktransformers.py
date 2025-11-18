@@ -12,6 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Integrate KTransformers for efficient model loading and inference.
+
+This module provides integration with the KTransformers library for loading
+and fine-tuning large language models with optimized GGUF weights and CPU
+offloading capabilities. It supports various model architectures including
+DeepSeek, Qwen, LLaMA, and Mixtral.
+
+Key Functions:
+    load_kt_pretrained_model: Load model with KTransformers optimization.
+    get_kt_peft_model: Get PEFT model with KTransformers compatibility.
+    load_kt_peft_model: Load existing PEFT adapter with KTransformers.
+
+Supported Model Architectures:
+    - DeepseekV2ForCausalLM
+    - DeepseekV3ForCausalLM
+    - Qwen2MoeForCausalLM
+    - Qwen3MoeForCausalLM
+    - LlamaForCausalLM
+    - MixtralForCausalLM
+
+Features:
+    - GGUF weight loading for memory efficiency
+    - CPU inference offloading
+    - LoRA adapter injection and loading
+    - Custom optimization rules via YAML configuration
+
+Example:
+    >>> from llamafactory.model.model_utils.ktransformers import load_kt_pretrained_model
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("deepseek-ai/DeepSeek-V2-Lite")
+    >>> model_args.use_kt = True
+    >>> model_args.kt_optimize_rule = "path/to/optimize_rules.yaml"
+    >>> model = load_kt_pretrained_model(config, model_args)
+
+See Also:
+    llamafactory.model.loader: Uses KTransformers loading when model_args.use_kt.
+    llamafactory.model.adapter: KTransformers PEFT model handling.
+"""
+
 import importlib.util as _u
 from typing import TYPE_CHECKING, Any
 

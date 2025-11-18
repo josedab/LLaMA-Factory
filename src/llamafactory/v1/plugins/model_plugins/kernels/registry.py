@@ -12,6 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement kernel registry and base classes for v1 kernel plugins.
+
+This module provides the central registry system for hardware-optimized kernels
+and the abstract base classes that all kernel implementations must extend. The
+registry follows a singleton pattern to ensure consistent kernel management
+across the application.
+
+Key Classes:
+    KernelRegistry: Singleton registry that maps kernel types and device types
+        to their implementations.
+    MetaKernel: Abstract base class defining the kernel interface with type,
+        device, and apply method.
+    MetaFlashAttentionKernel: Base class for Flash Attention implementations.
+    MetaRMSNormKernel: Base class for RMSNorm implementations.
+    MetaSwiGluKernel: Base class for SwiGLU implementations.
+    MetaRoPEKernel: Base class for Rotary Position Embedding implementations.
+    MetaMoEKernel: Base class for Mixture of Experts implementations.
+
+Key Functions:
+    discover_kernels: Auto-discover applicable kernels for the current environment.
+    apply_kernel: Apply a specific MetaKernel to a model with device validation.
+
+Example:
+    Register and apply a kernel::
+
+        from llamafactory.v1.plugins.model_plugins.kernels.registry import (
+            KERNEL_REGISTRY, apply_kernel, MetaRMSNormKernel
+        )
+        from llamafactory.v1.plugins.model_plugins.kernels.constants import (
+            KernelType, DeviceType
+        )
+
+        class MyRMSNorm(MetaRMSNormKernel):
+            device = DeviceType.CUDA
+            @classmethod
+            def apply(cls, model, **kwargs):
+                # Apply optimization
+                return model
+
+        KERNEL_REGISTRY.register(KernelType.RMSNORM, DeviceType.CUDA, MyRMSNorm)
+        model = apply_kernel(model, MyRMSNorm)
+
+See Also:
+    llamafactory.v1.plugins.model_plugins.kernels.constants: Type enumerations.
+    llamafactory.v1.plugins.model_plugins.kernels.rms_norm: RMSNorm implementations.
+"""
+
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Optional
 

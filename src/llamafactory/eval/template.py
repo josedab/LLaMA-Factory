@@ -12,6 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define evaluation templates for formatting benchmark prompts.
+
+This module provides the EvalTemplate class and template registry for creating
+language-specific evaluation prompts. Templates define how questions and answer
+choices are formatted for multiple-choice benchmarks, supporting both English
+and Chinese evaluation tasks.
+
+Each template specifies the system prompt format, choice formatting, and answer
+prompt style. The templates convert raw evaluation examples into properly formatted
+messages suitable for model input.
+
+Key Classes:
+    EvalTemplate: Dataclass defining the structure of an evaluation template
+        with system, choice, and answer format strings.
+
+Key Functions:
+    get_eval_template: Retrieve a registered template by language name.
+    _register_eval_template: Register a new evaluation template.
+
+Example:
+    Get and use an evaluation template::
+
+        from llamafactory.eval.template import get_eval_template
+
+        template = get_eval_template("en")
+        messages = template.format_example(
+            target_data={"question": "What is 2+2?", "A": "3", "B": "4", "answer": "B"},
+            support_set=[],
+            subject_name="Mathematics"
+        )
+
+    Register a custom template::
+
+        from llamafactory.eval.template import _register_eval_template
+
+        _register_eval_template(
+            name="custom",
+            system="Answer the following {subject} question:\\n\\n",
+            choice="\\n{choice}. {content}",
+            answer="\\nAnswer:"
+        )
+
+See Also:
+    llamafactory.eval.evaluator: Uses templates for formatting evaluation prompts.
+    llamafactory.data.Role: Role enumeration for message formatting.
+    llamafactory.extras.constants: Constants including CHOICES for answer options.
+"""
+
 from dataclasses import dataclass
 
 from ..data import Role

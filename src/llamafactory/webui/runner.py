@@ -12,6 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Manage training and evaluation process execution for WebUI.
+
+This module implements the Runner class that handles the lifecycle of training
+and evaluation jobs launched from the web interface. It validates configurations,
+builds command-line arguments, spawns subprocesses, monitors progress, and
+manages job state including abort handling and session restoration.
+
+Key Classes:
+    Runner: Training/evaluation process manager that handles configuration
+        validation, process spawning, progress monitoring, and state management.
+
+Example:
+    >>> from llamafactory.webui.runner import Runner
+    >>> from llamafactory.webui.manager import Manager
+    >>> manager = Manager()
+    >>> runner = Runner(manager, demo_mode=False)
+    >>> # Preview training command
+    >>> for output in runner.preview_train(data):
+    ...     print(output)
+    >>> # Start training
+    >>> for output in runner.run_train(data):
+    ...     yield output  # Progress updates
+    >>> # Abort running job
+    >>> runner.set_abort()
+    >>> # Save/load configuration
+    >>> runner.save_args(data)
+    >>> updates = runner.load_args("en", "config.yaml")
+
+See Also:
+    llamafactory.webui.engine.Engine: Creates and manages Runner instance.
+    llamafactory.webui.common: Utilities for argument parsing and saving.
+    llamafactory.webui.control.get_trainer_info: Progress monitoring helper.
+"""
+
 import json
 import os
 from collections.abc import Generator

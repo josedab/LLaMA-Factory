@@ -12,6 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define arguments for model evaluation tasks and benchmarks.
+
+This module provides the EvaluationArguments dataclass for configuring evaluation
+runs in LLaMA-Factory. It includes settings for benchmark tasks, few-shot learning,
+batch processing, and result saving for comprehensive model assessment.
+
+Key Classes:
+    EvaluationArguments: Dataclass containing evaluation parameters including
+        task specification, few-shot settings, batch size, language selection,
+        and output directory configuration.
+
+Key Attributes:
+    task: Name of the evaluation task/benchmark to run.
+    task_dir: Directory containing evaluation datasets.
+    batch_size: Batch size per GPU for evaluation.
+    n_shot: Number of exemplars for few-shot learning.
+    lang: Language for evaluation (en/zh).
+    save_dir: Output directory for evaluation results.
+
+Example:
+    >>> from llamafactory.hparams import EvaluationArguments
+    >>> eval_args = EvaluationArguments(
+    ...     task="mmlu",
+    ...     n_shot=5,
+    ...     batch_size=8,
+    ...     lang="en",
+    ...     save_dir="./eval_results"
+    ... )
+
+See Also:
+    llamafactory.hparams.ModelArguments: Model configuration for evaluation.
+    llamafactory.hparams.parser.get_eval_args: Parse evaluation arguments.
+    llamafactory.eval: Evaluation task implementations.
+"""
+
 import os
 from dataclasses import dataclass, field
 from typing import Literal, Optional

@@ -12,6 +12,45 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Provide the main entry point for loading and preprocessing datasets.
+
+This module is the primary interface for dataset loading in LlamaFactory. It
+handles loading datasets from various sources (HuggingFace Hub, ModelScope,
+local files, cloud storage), aligning them to a standard format, preprocessing
+with stage-specific processors, and splitting into train/validation sets.
+The main function get_dataset orchestrates the entire data pipeline.
+
+Key Classes and Functions:
+    get_dataset: Main entry point to load and preprocess datasets for training.
+    _load_single_dataset: Load and align a single dataset from its source.
+    _get_merged_dataset: Merge multiple datasets using specified strategy.
+    _get_dataset_processor: Get appropriate processor for training stage.
+    _get_preprocessed_dataset: Apply preprocessing and tokenization.
+
+Example:
+    >>> from llamafactory.data import get_dataset, get_template_and_fix_tokenizer
+    >>> # Load dataset for supervised fine-tuning
+    >>> template = get_template_and_fix_tokenizer(tokenizer, data_args)
+    >>> dataset_module = get_dataset(
+    ...     template=template,
+    ...     model_args=model_args,
+    ...     data_args=data_args,
+    ...     training_args=training_args,
+    ...     stage="sft",
+    ...     tokenizer=tokenizer,
+    ...     processor=processor  # Optional, for multimodal models
+    ... )
+    >>> train_dataset = dataset_module["train_dataset"]
+    >>> eval_dataset = dataset_module.get("eval_dataset")
+
+See Also:
+    llamafactory.data.converter: Format conversion for different dataset types.
+    llamafactory.data.processor: Stage-specific dataset processors.
+    llamafactory.data.parser: Dataset configuration and attribute parsing.
+    llamafactory.data.template: Chat templates for conversation formatting.
+"""
+
 import os
 from typing import TYPE_CHECKING, Literal, Optional, Union
 

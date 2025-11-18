@@ -15,6 +15,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Support vision-language models with composite architecture handling.
+
+This module provides comprehensive support for vision-language models (VLMs)
+including model registration, projector handling, and selective freezing of
+model components. It maintains a registry of composite models with their
+specific architecture details.
+
+Key Functions:
+    configure_visual_model: Patch VLM configurations before loading.
+    autocast_projector_dtype: Cast projector output for quantized VLMs.
+    get_forbidden_modules: Get modules to freeze based on finetuning settings.
+    patch_target_modules: Filter LoRA targets for VLM components.
+
+Key Classes:
+    CompositeModel: Dataclass describing VLM architecture components.
+    LlavaMultiModalProjectorForYiVL: Custom projector for Yi-VL models.
+
+Registered Composite Models:
+    - DOTS OCR, Gemma 3/3N
+    - GLM4V, GLM4V MoE
+    - InternVL, InternS1
+    - Keye, Kimi VL
+    - LLaMA 4, LLaVA, LLaVA-Next, LLaVA-Next-Video
+    - MiniCPM-V, MiniCPM-O
+    - Mistral 3, MLLaMA
+    - PaliGemma
+    - Qwen2-Audio, Qwen2-VL, Qwen2.5-VL, Qwen2.5-Omni
+    - Qwen3-VL, Qwen3-VL-MoE, Qwen3-Omni-MoE
+    - Video-LLaVA
+
+Each CompositeModel defines:
+    - projector_key: Path to multimodal projector
+    - vision_model_keys: Paths to vision encoder components
+    - language_model_keys: Paths to language model components
+    - lora_conflict_keys: Modules to exclude from LoRA
+
+Example:
+    >>> from llamafactory.model.model_utils.visual import (
+    ...     COMPOSITE_MODELS, get_forbidden_modules
+    ... )
+    >>>
+    >>> # Check if model is a VLM
+    >>> if "llava" in COMPOSITE_MODELS:
+    ...     composite = COMPOSITE_MODELS["llava"]
+    ...     print(composite.projector_key)  # "multi_modal_projector"
+    >>>
+    >>> # Get modules to freeze
+    >>> finetuning_args.freeze_vision_tower = True
+    >>> forbidden = get_forbidden_modules(config, finetuning_args)
+
+See Also:
+    llamafactory.model.patcher: Uses visual module for VLM configuration.
+    llamafactory.model.adapter: Uses visual module for LoRA target filtering.
+"""
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Optional
 

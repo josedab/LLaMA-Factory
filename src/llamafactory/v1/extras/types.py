@@ -12,6 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define type aliases and TypedDicts for v1 module.
+
+This module provides comprehensive type definitions for the LLaMA Factory v1
+system, including type aliases for PyTorch and HuggingFace objects, as well as
+TypedDict definitions for structured data like samples and messages.
+
+The type definitions enable better IDE support, static type checking, and serve
+as documentation for the expected data structures throughout the v1 codebase.
+Runtime type checking is minimized by using TYPE_CHECKING guards.
+
+Key Type Aliases:
+    Tensor: PyTorch tensor type.
+    TorchDataset: Union of PyTorch Dataset and IterableDataset.
+    HFDataset: Union of HuggingFace Dataset and IterableDataset.
+    Processor: Union of PreTrainedTokenizer and ProcessorMixin.
+    Model: TypedDict containing HF and distributed model references.
+
+Key TypedDicts:
+    DatasetInfo: Configuration for a single dataset source.
+    Message: Single message in a conversation with role and content.
+    SFTSample: Sample for supervised fine-tuning with messages.
+    DPOSample: Sample for DPO training with chosen/rejected messages.
+    Sample: Union of SFTSample and DPOSample.
+
+Example:
+    Use type hints in function signatures::
+
+        from llamafactory.v1.extras.types import Sample, Processor
+
+        def process_sample(sample: Sample, processor: Processor) -> dict:
+            # Process the sample
+            pass
+
+    Create typed dataset info::
+
+        from llamafactory.v1.extras.types import DatasetInfo
+
+        info: DatasetInfo = {
+            "hf_hub_url": "llamafactory/alpaca",
+            "split": "train",
+            "converter": "alpaca"
+        }
+
+See Also:
+    llamafactory.v1.core.data_engine: Uses these types for data handling.
+    llamafactory.v1.plugins.data_plugins.converter: Sample conversion utilities.
+"""
+
 from typing import TYPE_CHECKING, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired

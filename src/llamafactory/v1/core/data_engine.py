@@ -12,6 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement unified data loading engine for v1 training.
+
+This module provides the DataEngine class which serves as the central data loading
+and preprocessing component for LLaMA Factory v1. It supports multiple data sources
+including local files, Hugging Face Hub datasets, and streaming datasets, with
+automatic format detection and conversion.
+
+The DataEngine implements the PyTorch Dataset interface, enabling seamless
+integration with DataLoaders and distributed training. It supports pluggable
+data converters for transforming various data formats into the standardized
+internal representation.
+
+Key Classes:
+    DataEngine: Main data engine class implementing PyTorch Dataset interface
+        with support for multiple datasets, streaming, and automatic conversion.
+
+Example:
+    Load data from a local file::
+
+        from llamafactory.v1.config.data_args import DataArguments
+        from llamafactory.v1.core.data_engine import DataEngine
+
+        data_args = DataArguments(dataset="data.json", dataset_dir="./data")
+        engine = DataEngine(data_args)
+        sample = engine[0]
+
+    Load data from Hugging Face Hub::
+
+        data_args = DataArguments(dataset="llamafactory/alpaca-en")
+        engine = DataEngine(data_args)
+
+    Use with YAML dataset configuration::
+
+        data_args = DataArguments(dataset="dataset_info.yaml")
+        engine = DataEngine(data_args)
+
+See Also:
+    llamafactory.v1.config.data_args: Data configuration parameters.
+    llamafactory.v1.plugins.data_plugins: Data loading and conversion plugins.
+    llamafactory.v1.extras.types: Type definitions for samples and datasets.
+"""
+
 import os
 from collections.abc import AsyncIterable, Iterable
 from typing import Any, Union

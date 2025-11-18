@@ -12,6 +12,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement base trainer and data collator for v1 training loop.
+
+This module provides the foundational training infrastructure for LLaMA Factory v1,
+including the BaseTrainer class that implements the common training loop logic and
+the DataCollator class for batch preparation. These components serve as building
+blocks for specialized trainers like SFTTrainer and DPOTrainer.
+
+The BaseTrainer implements a flexible training loop that supports custom optimizers,
+learning rate schedulers, and data loaders. Specialized trainers extend this base
+class to implement task-specific loss functions and training procedures.
+
+Key Classes:
+    DataCollator: Collates individual feature dictionaries into batched tensors
+        for efficient GPU processing.
+    BaseTrainer: Base trainer class providing the core training loop, optimizer
+        setup, and checkpointing functionality.
+
+Example:
+    Create a custom trainer by extending BaseTrainer::
+
+        from llamafactory.v1.core.base_trainer import BaseTrainer
+
+        class CustomTrainer(BaseTrainer):
+            def compute_loss(self, batch):
+                outputs = self.model(**batch)
+                return outputs.loss
+
+        trainer = CustomTrainer(args, model, processor, dataset, data_collator)
+        trainer.fit()
+
+    Use the DataCollator directly::
+
+        from llamafactory.v1.core.base_trainer import DataCollator
+
+        collator = DataCollator(processor)
+        batch = collator(features)
+
+See Also:
+    llamafactory.v1.trainers.sft_trainer: SFT trainer implementation.
+    llamafactory.v1.trainers.dpo_trainer: DPO trainer implementation.
+    llamafactory.v1.config.training_args: Training configuration.
+"""
+
 from typing import Any
 
 from ..config.training_args import TrainingArguments

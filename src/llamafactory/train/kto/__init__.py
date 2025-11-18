@@ -12,6 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Expose Kahneman-Tversky Optimization (KTO) workflow for binary feedback alignment.
+
+This package provides the KTO workflow for aligning language models using
+binary feedback (thumbs up/down) instead of pairwise comparisons, with
+configurable desirable/undesirable weights.
+
+Key Functions:
+    run_kto: Execute the KTO training workflow with specified arguments.
+
+Example:
+    >>> from llamafactory.train.kto import run_kto
+    >>> run_kto(model_args, data_args, training_args, finetuning_args, callbacks)
+
+See Also:
+    - llamafactory.train.kto.workflow: Full KTO workflow implementation.
+    - llamafactory.train.kto.trainer: Custom KTO trainer extending TRL.
+    - llamafactory.train.tuner: Main training orchestration.
+"""
+
 from .workflow import run_kto
 
 

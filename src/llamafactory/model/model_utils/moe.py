@@ -12,6 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Configure Mixture-of-Experts models and DeepSpeed ZeRO-3 compatibility.
+
+This module handles the configuration of MoE (Mixture-of-Experts) models
+for training, including auxiliary loss setup and DeepSpeed ZeRO-3 leaf
+module registration to prevent partitioning of MoE blocks.
+
+Key Functions:
+    configure_moe: Set up router auxiliary loss for MoE training.
+    add_z3_leaf_module: Register MoE blocks as leaf modules for ZeRO-3.
+
+Key Classes:
+    Qwen3OmniMoeThinkerTextSparseMoeBlock: Patched MoE block for Qwen3-Omni.
+
+Supported MoE Architectures:
+    - DBRX
+    - DeepSeek V2/V3
+    - Ernie 4.5 MoE
+    - GLM4 MoE
+    - GraniteMoE
+    - Jamba
+    - JetMoE
+    - LLaMA 4
+    - Mixtral
+    - OLMoE
+    - PhiMoE
+    - Qwen2 MoE, Qwen3 MoE, Qwen3 VL MoE, Qwen3 Omni MoE
+
+DeepSpeed ZeRO-3:
+    MoE blocks must be registered as "leaf modules" to prevent ZeRO-3 from
+    partitioning expert weights incorrectly, which would break the routing.
+
+Example:
+    >>> from llamafactory.model.model_utils.moe import configure_moe, add_z3_leaf_module
+    >>> from transformers import AutoConfig, AutoModelForCausalLM
+    >>>
+    >>> config = AutoConfig.from_pretrained("Qwen/Qwen1.5-MoE-A2.7B")
+    >>> model_args.moe_aux_loss_coef = 0.01
+    >>> configure_moe(config, model_args, is_trainable=True)
+    >>>
+    >>> model = AutoModelForCausalLM.from_pretrained("Qwen/Qwen1.5-MoE-A2.7B")
+    >>> add_z3_leaf_module(model)  # For DeepSpeed ZeRO-3 training
+
+See Also:
+    llamafactory.model.patcher: Calls configure_moe and add_z3_leaf_module.
+    llamafactory.hparams.ModelArguments: Contains moe_aux_loss_coef setting.
+"""
+
 from typing import TYPE_CHECKING, Union
 
 import torch

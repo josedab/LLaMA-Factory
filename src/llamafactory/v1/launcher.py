@@ -12,6 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide the command-line interface launcher for LLaMA Factory v1.
+
+This module implements the main entry point for the LLaMA Factory v1 CLI,
+handling command parsing and routing to appropriate training or utility
+functions. It supports various commands including supervised fine-tuning,
+environment information display, and version checking.
+
+The launcher provides a streamlined interface for accessing v1 functionality
+while maintaining backward compatibility with the existing LLaMA Factory
+command structure.
+
+Key Functions:
+    launch: Main entry point that parses CLI commands and dispatches to
+        appropriate handlers.
+
+Example:
+    Run SFT training from command line::
+
+        llamafactory-cli sft config.yaml
+
+    Display version information::
+
+        llamafactory-cli version
+
+    Show environment details::
+
+        llamafactory-cli env
+
+    Display usage help::
+
+        llamafactory-cli help
+
+See Also:
+    llamafactory.v1.trainers.sft_trainer: SFT training implementation.
+    llamafactory.extras.env: Environment information utilities.
+"""
+
 import sys
 
 from ..extras.env import VERSION, print_env

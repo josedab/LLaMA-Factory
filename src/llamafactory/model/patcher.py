@@ -12,6 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Patch models, tokenizers, and configurations for LlamaFactory compatibility.
+
+This module provides functions to modify and extend the behavior of HuggingFace
+models, tokenizers, and configurations. It handles attention implementation
+selection, RoPE scaling, quantization setup, gradient checkpointing, embedding
+resizing, and various model-specific patches.
+
+Key Functions:
+    patch_config: Patch model configuration before loading.
+    patch_model: Patch model after loading for training/inference.
+    patch_tokenizer: Patch tokenizer with custom tokens and settings.
+    patch_processor: Patch multimodal processor with image/video settings.
+    patch_valuehead_model: Patch value head model for RLHF compatibility.
+
+Configuration Patches:
+    - Attention implementation (FlashAttention-2, SDPA, eager)
+    - RoPE scaling (linear, dynamic, yarn, llama3)
+    - Quantization setup (BNB, GPTQ, HQQ, EETQ)
+    - MoE auxiliary loss configuration
+    - KV cache settings
+    - Visual model configuration
+
+Model Patches:
+    - Generation config fixes
+    - Gradient checkpointing setup
+    - Embedding layer resizing
+    - Projector dtype casting for quantized VLMs
+
+Example:
+    >>> from llamafactory.model.patcher import patch_config, patch_model
+    >>> from transformers import AutoConfig, AutoModelForCausalLM
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> init_kwargs = {}
+    >>> patch_config(config, tokenizer, model_args, init_kwargs, is_trainable=True)
+    >>>
+    >>> model = AutoModelForCausalLM.from_pretrained(
+    ...     "meta-llama/Llama-2-7b-hf",
+    ...     **init_kwargs
+    ... )
+    >>> patch_model(model, tokenizer, model_args, is_trainable=True, add_valuehead=False)
+
+See Also:
+    llamafactory.model.loader: Uses patcher functions during model loading.
+    llamafactory.model.model_utils: Individual patching utilities.
+"""
+
 from types import MethodType
 from typing import TYPE_CHECKING, Any
 

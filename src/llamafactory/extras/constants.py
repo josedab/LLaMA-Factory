@@ -12,6 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define global constants and configurations for LLaMA-Factory.
+
+This module contains all the global constants, enumerations, and model
+registry configurations used throughout LLaMA-Factory. It provides a
+centralized location for file names, placeholder values, supported models,
+training stages, and various configuration mappings.
+
+Constants:
+    AUDIO_PLACEHOLDER: Placeholder string for audio inputs in multimodal models.
+    IMAGE_PLACEHOLDER: Placeholder string for image inputs in multimodal models.
+    VIDEO_PLACEHOLDER: Placeholder string for video inputs in multimodal models.
+    CHECKPOINT_NAMES: Set of valid checkpoint file names.
+    IGNORE_INDEX: Index value to ignore in loss computation (-100).
+    SUPPORTED_MODELS: OrderedDict of all supported model configurations.
+    TRAINING_STAGES: Mapping of training stage names to identifiers.
+
+Classes:
+    AttentionFunction: Enumeration of attention implementation options.
+    EngineName: Enumeration of inference engine types.
+    DownloadSource: Enumeration of model download sources (HF, ModelScope, OpenMind).
+    QuantizationMethod: Enumeration of supported quantization methods.
+    RopeScaling: Enumeration of RoPE scaling strategies.
+
+Functions:
+    register_model_group: Register a group of models with their download sources.
+
+Example:
+    Access constants and register models::
+
+        from llamafactory.extras.constants import (
+            SUPPORTED_MODELS,
+            TRAINING_STAGES,
+            DownloadSource,
+            register_model_group,
+        )
+
+        # Check if a model is supported
+        if "Llama-3-8B" in SUPPORTED_MODELS:
+            model_path = SUPPORTED_MODELS["Llama-3-8B"][DownloadSource.DEFAULT]
+
+        # Get training stage identifier
+        stage_id = TRAINING_STAGES["Supervised Fine-Tuning"]  # Returns "sft"
+
+See Also:
+    llamafactory.extras.env: Environment and version information.
+    llamafactory.hparams.model_args: Model argument configurations.
+"""
+
 import os
 from collections import OrderedDict, defaultdict
 from enum import Enum, unique

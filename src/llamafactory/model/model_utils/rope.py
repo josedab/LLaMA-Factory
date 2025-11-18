@@ -16,6 +16,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Configure RoPE (Rotary Position Embedding) scaling for extended contexts.
+
+This module handles the configuration of RoPE scaling methods to enable
+models to handle longer sequences than they were originally trained on.
+It supports various scaling strategies with different characteristics.
+
+Key Functions:
+    configure_rope: Set up RoPE scaling in model configuration.
+
+Supported Scaling Types:
+    - LINEAR: Simple linear interpolation of position indices.
+    - DYNAMIC: Dynamic NTK-aware scaling that adjusts based on sequence length.
+    - YARN: Yet Another RoPE extensioN with better extrapolation.
+    - LLAMA3: LLaMA 3 style with separate low/high frequency factors.
+
+Scaling Factor Calculation:
+    For training: ceil(model_max_length / original_max_length)
+    For inference: Fixed factor of 2.0
+
+Important Notes:
+    - Dynamic NTK scaling may not work well with fine-tuning.
+    - YARN provides better quality for extreme context extensions.
+    - LLAMA3 scaling uses specific frequency factors (low=1.0, high=4.0).
+
+Example:
+    >>> from llamafactory.model.model_utils.rope import configure_rope
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.rope_scaling = "linear"
+    >>> model_args.model_max_length = 8192  # Original is 4096
+    >>> configure_rope(config, model_args)
+    >>> # config.rope_scaling = {"rope_type": "linear", "factor": 2.0}
+    >>> # config.max_position_embeddings = 8192
+
+See Also:
+    llamafactory.model.patcher: Calls configure_rope in patch_config.
+    llamafactory.extras.constants: RopeScaling enum definitions.
+"""
+
 import math
 from typing import TYPE_CHECKING
 

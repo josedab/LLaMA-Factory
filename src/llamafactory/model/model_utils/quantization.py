@@ -16,6 +16,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Configure model quantization for memory-efficient training and inference.
+
+This module handles the configuration of various quantization methods for
+loading and exporting quantized models. It supports both on-the-fly quantization
+during loading and post-training quantization for model export.
+
+Key Functions:
+    configure_quantization: Main quantization configuration entry point.
+
+Supported Quantization Methods:
+    On-the-fly (during loading):
+        - BNB (bitsandbytes): 4-bit and 8-bit quantization with QLoRA support.
+        - HQQ: Half-Quadratic Quantization (1-8 bit).
+        - EETQ: 8-bit quantization optimized for inference.
+
+    PTQ (Post-Training Quantization, for loading):
+        - GPTQ: GPU-accelerated quantization via GPTQModel.
+        - AWQ: Activation-aware Weight Quantization.
+        - AQLM: Additive Quantization of Language Models.
+
+    Export (for model export):
+        - GPTQModel: Export model in GPTQ format.
+
+Key Features:
+    - DeepSpeed ZeRO-3 and FSDP compatibility checks
+    - Automatic device mapping for quantized models
+    - Calibration dataset preparation for GPTQ export
+
+Example:
+    >>> from llamafactory.model.model_utils.quantization import configure_quantization
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> init_kwargs = {}
+    >>>
+    >>> # 4-bit quantization with bitsandbytes
+    >>> model_args.quantization_bit = 4
+    >>> model_args.quantization_method = "bnb"
+    >>> configure_quantization(config, tokenizer, model_args, init_kwargs)
+
+See Also:
+    llamafactory.model.patcher: Calls configure_quantization in patch_config.
+    llamafactory.extras.constants: QuantizationMethod enum.
+"""
+
 import os
 import random
 from typing import TYPE_CHECKING, Any

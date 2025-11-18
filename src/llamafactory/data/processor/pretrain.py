@@ -15,6 +15,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Process datasets for language model pretraining.
+
+This module implements the PretrainDatasetProcessor for preparing datasets
+for causal language model pretraining. It handles tokenization of raw text
+and optionally packs multiple examples into fixed-length sequences for
+efficient training.
+
+Key Classes and Functions:
+    PretrainDatasetProcessor: Processor for pretraining data.
+
+Example:
+    >>> from llamafactory.data.processor.pretrain import PretrainDatasetProcessor
+    >>> processor = PretrainDatasetProcessor(
+    ...     template=template,
+    ...     tokenizer=tokenizer,
+    ...     processor=None,
+    ...     data_args=data_args
+    ... )
+    >>> model_inputs = processor.preprocess_dataset(examples)
+    >>> # Outputs include: input_ids, attention_mask (labels = input_ids for CLM)
+
+See Also:
+    llamafactory.data.processor.processor_utils: Base DatasetProcessor class.
+    llamafactory.train.pt: Pretraining workflow implementation.
+"""
+
 from dataclasses import dataclass
 from itertools import chain
 from typing import Any

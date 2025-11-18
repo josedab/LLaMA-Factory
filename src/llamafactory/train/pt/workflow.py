@@ -15,6 +15,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the pre-training workflow for causal language models.
+
+This module provides the complete pre-training pipeline including tokenizer
+and model loading, dataset preparation, trainer initialization, training
+execution, evaluation with perplexity computation, and model card creation.
+
+Key Functions:
+    run_pt: Execute the complete pre-training workflow.
+
+Example:
+    >>> from llamafactory.train.pt.workflow import run_pt
+    >>> from llamafactory.hparams import get_train_args
+    >>> model_args, data_args, training_args, finetuning_args, _ = get_train_args()
+    >>> run_pt(model_args, data_args, training_args, finetuning_args)
+
+See Also:
+    - llamafactory.train.pt.trainer: Custom trainer used in this workflow.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+    - llamafactory.data: Dataset loading utilities.
+    - llamafactory.model: Model loading utilities.
+"""
+
 import math
 from typing import TYPE_CHECKING, Optional
 

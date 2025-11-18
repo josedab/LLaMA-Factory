@@ -15,6 +15,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the reward modeling workflow for preference-based model training.
+
+This module provides the complete reward modeling pipeline including tokenizer
+and model loading with valuehead, pairwise dataset preparation, trainer
+initialization, training with valuehead checkpoint fixing, evaluation, and
+prediction saving.
+
+Key Functions:
+    run_rm: Execute the complete reward modeling workflow.
+
+Example:
+    >>> from llamafactory.train.rm.workflow import run_rm
+    >>> from llamafactory.hparams import get_train_args
+    >>> model_args, data_args, training_args, finetuning_args, _ = get_train_args()
+    >>> run_rm(model_args, data_args, training_args, finetuning_args)
+
+See Also:
+    - llamafactory.train.rm.trainer: Pairwise trainer used in this workflow.
+    - llamafactory.train.rm.metric: Accuracy metrics for reward prediction.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+    - llamafactory.data.collator: Pairwise data collator for RM.
+"""
+
 from typing import TYPE_CHECKING, Optional
 
 from ...data import PairwiseDataCollatorWithPadding, get_dataset, get_template_and_fix_tokenizer

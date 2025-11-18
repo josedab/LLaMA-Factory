@@ -12,6 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Configure and manage attention implementation settings for models.
+
+This module handles the selection and configuration of attention mechanisms
+including FlashAttention-2, SDPA (Scaled Dot-Product Attention), and eager
+(vanilla) attention. It provides model-specific handling for attention
+configuration and logging.
+
+Key Functions:
+    configure_attn_implementation: Set attention implementation in model config.
+    print_attn_implementation: Log the selected attention implementation.
+
+Supported Attention Types:
+    - AUTO: Let the model decide based on availability.
+    - FA2: FlashAttention-2 for memory-efficient training.
+    - SDPA: PyTorch's scaled dot-product attention.
+    - DISABLED: Vanilla/eager attention implementation.
+
+Special Model Handling:
+    - Gemma 2: Requires FlashAttention-2 for soft-capping attention.
+    - InternLM2: Uses custom attn_implementation attribute.
+    - Kimi VL: Configures both vision and text configs.
+
+Example:
+    >>> from llamafactory.model.model_utils.attention import configure_attn_implementation
+    >>> from transformers import AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.flash_attn = "fa2"
+    >>> configure_attn_implementation(config, model_args)
+    >>> # config._attn_implementation is now "flash_attention_2"
+
+See Also:
+    llamafactory.model.patcher: Calls configure_attn_implementation during setup.
+    llamafactory.extras.constants: AttentionFunction enum definitions.
+"""
+
 from typing import TYPE_CHECKING
 
 from ...extras import logging

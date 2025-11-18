@@ -12,6 +12,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Resize and initialize token embeddings for vocabulary expansion.
+
+This module handles the resizing of embedding layers when adding new tokens
+to a model's vocabulary. It provides multiple initialization strategies for
+new token embeddings including noise-based and semantic description-based
+initialization methods.
+
+Key Functions:
+    resize_embedding_layer: Resize model embeddings to match tokenizer vocabulary.
+    _noisy_mean_initialization: Initialize with mean embedding plus Gaussian noise.
+    _description_based_initialization: Initialize from textual token descriptions.
+
+Initialization Methods:
+    - noise_init: Mean of existing embeddings + Gaussian noise (default).
+    - desc_init: Average embeddings of description tokens.
+    - desc_init_w_noise: Description-based + Gaussian noise.
+
+The module handles both input and output embeddings, respecting tied weights
+configuration. It also supports DeepSpeed ZeRO-3 with proper parameter gathering.
+
+Example:
+    >>> from llamafactory.model.model_utils.embedding import resize_embedding_layer
+    >>> from transformers import AutoModelForCausalLM, AutoTokenizer
+    >>>
+    >>> tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>>
+    >>> # Add custom tokens
+    >>> tokenizer.add_tokens(["<custom_1>", "<custom_2>"])
+    >>>
+    >>> # Resize embeddings with semantic initialization
+    >>> descriptions = {"<custom_1>": "A special marker token", "<custom_2>": "End of section"}
+    >>> resize_embedding_layer(
+    ...     model, tokenizer,
+    ...     new_special_tokens_config=descriptions,
+    ...     init_special_tokens="desc_init"
+    ... )
+
+See Also:
+    llamafactory.model.patcher: Calls resize_embedding_layer in patch_model.
+    llamafactory.hparams.ModelArguments: Configuration for init_special_tokens.
+"""
+
 import math
 from contextlib import nullcontext
 from typing import TYPE_CHECKING, Optional

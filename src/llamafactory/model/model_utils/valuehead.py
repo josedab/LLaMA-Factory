@@ -12,6 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Load and prepare value head models for RLHF training.
+
+This module handles the loading of value head parameters and preparation
+of models for reinforcement learning from human feedback (RLHF). The value
+head is an additional linear layer that predicts scalar values for PPO training.
+
+Key Functions:
+    load_valuehead_params: Load value head weights from checkpoint.
+    prepare_valuehead_model: Prepare base model for value head attachment.
+
+Value Head Architecture:
+    The value head consists of a linear layer (v_head.summary) that maps
+    hidden states to scalar values. It's saved separately from the main model:
+    - v_head.summary.weight
+    - v_head.summary.bias
+
+File Formats:
+    - SafeTensors: value_head.safetensors (preferred)
+    - PyTorch: value_head.bin (fallback)
+
+Model Preparation:
+    prepare_valuehead_model handles model-specific quirks for:
+    - LLaVA: Maps lm_head to language_model output embeddings
+    - ChatGLM: Maps lm_head to transformer.output_layer
+    - InternLM2: Maps lm_head to output
+
+Example:
+    >>> from llamafactory.model.model_utils.valuehead import load_valuehead_params
+    >>>
+    >>> # Load value head from adapter checkpoint
+    >>> vhead_params = load_valuehead_params(
+    ...     "path/to/adapter",
+    ...     model_args
+    ... )
+    >>> if vhead_params:
+    ...     model.load_state_dict(vhead_params, strict=False)
+
+See Also:
+    llamafactory.model.loader: Uses valuehead functions when add_valuehead=True.
+    llamafactory.model.patcher: Patches valuehead model for compatibility.
+"""
+
 from typing import TYPE_CHECKING
 
 import torch

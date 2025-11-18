@@ -12,6 +12,67 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement data format converters for v1 data pipeline.
+
+This module provides converter functions that transform raw dataset samples
+from various formats (Alpaca, ShareGPT, pair) into the standardized internal
+representation used by the v1 training system. Each converter handles the
+specific structure of its source format and produces properly formatted
+SFT or DPO samples.
+
+The converters are registered in a global dictionary that allows the data
+engine to automatically select the appropriate converter based on dataset
+configuration.
+
+Key TypedDicts:
+    AlpacaSample: Input format for Alpaca-style instruction-following data.
+    ShareGPTSample: Input format for ShareGPT conversation data.
+    PairSample: Input format for preference pair data (DPO).
+
+Key Functions:
+    alpaca_converter: Convert Alpaca format to SFTSample with support for
+        system messages and conversation history.
+    sharegpt_converter: Convert ShareGPT conversation format to SFTSample
+        with role mapping and loss weight assignment.
+    pair_converter: Convert preference pairs to DPOSample with chosen and
+        rejected message sequences.
+    get_converter: Retrieve a registered converter function by name.
+
+Example:
+    Convert Alpaca format data::
+
+        from llamafactory.v1.plugins.data_plugins.converter import alpaca_converter
+
+        raw = {
+            "instruction": "Translate to French",
+            "input": "Hello",
+            "output": "Bonjour"
+        }
+        sample = alpaca_converter(raw)
+
+    Convert ShareGPT conversation::
+
+        from llamafactory.v1.plugins.data_plugins.converter import sharegpt_converter
+
+        raw = {
+            "conversations": [
+                {"from": "human", "value": "Hello"},
+                {"from": "gpt", "value": "Hi there!"}
+            ]
+        }
+        sample = sharegpt_converter(raw)
+
+    Get converter by name::
+
+        from llamafactory.v1.plugins.data_plugins.converter import get_converter
+
+        converter = get_converter("pair")
+        sample = converter(raw_pair_data)
+
+See Also:
+    llamafactory.v1.core.data_engine: Uses converters during data loading.
+    llamafactory.v1.extras.types: Type definitions for SFTSample and DPOSample.
+"""
 
 from typing import Callable, TypedDict
 

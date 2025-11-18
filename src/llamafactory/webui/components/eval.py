@@ -12,6 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build the evaluation and prediction tab for model assessment.
+
+This module creates the UI components for configuring and running model
+evaluation or prediction tasks. It includes dataset selection, generation
+parameters, output configuration, and progress monitoring controls.
+
+Key Functions:
+    create_eval_tab: Build complete evaluation tab with all configuration
+        options and action buttons.
+
+Example:
+    >>> from llamafactory.webui.components.eval import create_eval_tab
+    >>> from llamafactory.webui.engine import Engine
+    >>> engine = Engine()
+    >>> # Create evaluation tab
+    >>> eval_elems = create_eval_tab(engine)
+    >>> engine.manager.add_elems("eval", eval_elems)
+    >>> # eval_elems includes: dataset_dir, dataset, cutoff_len, max_samples,
+    >>> # batch_size, predict, max_new_tokens, top_p, temperature, output_dir,
+    >>> # cmd_preview_btn, start_btn, stop_btn, progress_bar, output_box
+
+See Also:
+    llamafactory.webui.runner.Runner: Executes evaluation jobs.
+    llamafactory.webui.control.list_datasets: Lists available datasets.
+    llamafactory.webui.components.data: Dataset preview functionality.
+"""
+
 from typing import TYPE_CHECKING
 
 from ...extras.packages import is_gradio_available

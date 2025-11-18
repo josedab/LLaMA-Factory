@@ -12,6 +12,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide training metrics visualization and plotting utilities.
+
+This module contains functions for visualizing training progress and
+metrics using matplotlib. It supports plotting loss curves with
+exponential moving average (EMA) smoothing and is used by both the
+command-line interface and LLaMA Board web interface.
+
+Functions:
+    smooth: Apply EMA smoothing to a list of scalar values.
+    gen_loss_plot: Generate a loss plot figure for LLaMA Board.
+    plot_loss: Plot and save training loss curves to image files.
+
+Example:
+    Plot training metrics after training::
+
+        from llamafactory.extras.ploting import plot_loss, smooth
+
+        # Plot loss curves from trainer state
+        plot_loss(
+            save_dictionary="./output/checkpoint-1000",
+            keys=["loss", "eval_loss", "learning_rate"]
+        )
+        # Saves: training_loss.png, training_eval_loss.png, etc.
+
+        # Apply smoothing to custom metrics
+        raw_values = [2.5, 2.3, 2.1, 1.9, 1.8, 1.7]
+        smoothed = smooth(raw_values)
+
+        # Generate figure for web display
+        from llamafactory.extras.ploting import gen_loss_plot
+
+        trainer_log = [
+            {"current_steps": 100, "loss": 2.5},
+            {"current_steps": 200, "loss": 2.1},
+            {"current_steps": 300, "loss": 1.8},
+        ]
+        fig = gen_loss_plot(trainer_log)
+        # Use fig in Gradio or save to file
+
+See Also:
+    llamafactory.extras.packages: Check matplotlib availability.
+    llamafactory.extras.logging: Logging utilities for warnings.
+    transformers.trainer: Source of TRAINER_STATE_NAME constant.
+"""
+
 import json
 import math
 import os

@@ -12,6 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Configure and run the FastAPI application for LLM inference serving.
+
+This module provides the FastAPI application factory and server entry point
+for the LlamaFactory API. It sets up OpenAI-compatible REST endpoints for
+chat completions, model listing, and score evaluation, with support for
+CORS, API key authentication, and automatic GPU memory management.
+
+The server supports configuration via environment variables:
+    - API_HOST: Server host address (default: "0.0.0.0")
+    - API_PORT: Server port number (default: "8000")
+    - API_KEY: Optional API key for authentication
+    - API_MODEL_NAME: Model name to report (default: "gpt-3.5-turbo")
+    - FASTAPI_ROOT_PATH: Root path for API routing
+
+Key Functions:
+    create_app: Factory function to create configured FastAPI application.
+    run_api: Main entry point to initialize model and start server.
+    sweeper: Background task for periodic GPU memory cleanup.
+    lifespan: Async context manager for application lifecycle events.
+
+Example:
+    Run the API server programmatically::
+
+        from llamafactory.api.app import run_api
+        run_api()  # Starts server on configured host:port
+
+    Create a custom FastAPI app::
+
+        from llamafactory.chat import ChatModel
+        from llamafactory.api.app import create_app
+
+        chat_model = ChatModel()
+        app = create_app(chat_model)
+        # Use app with custom uvicorn configuration
+
+    Access API documentation::
+
+        # After starting the server, visit:
+        # http://localhost:8000/docs (Swagger UI)
+        # http://localhost:8000/redoc (ReDoc)
+
+See Also:
+    - :mod:`llamafactory.api.chat`: Chat completion handler implementations.
+    - :mod:`llamafactory.api.protocol`: Request/response data models.
+    - :mod:`llamafactory.chat.ChatModel`: Core chat model interface.
+"""
+
 import asyncio
 import os
 from contextlib import asynccontextmanager

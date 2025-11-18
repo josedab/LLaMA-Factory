@@ -12,6 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Provide base classes and utilities for dataset processors.
+
+This module defines the abstract DatasetProcessor base class and utility
+functions used by all stage-specific processors. It includes sequence length
+inference for balanced truncation and a greedy knapsack algorithm for
+efficient sequence packing.
+
+Key Classes and Functions:
+    DatasetProcessor: Abstract base class for all dataset processors.
+    infer_seqlen: Compute optimal source/target lengths after truncation.
+    search_for_fit: Binary search helper for knapsack algorithm.
+    greedy_knapsack: Pack variable-length sequences into fixed-capacity bins.
+
+Example:
+    >>> from llamafactory.data.processor.processor_utils import DatasetProcessor, infer_seqlen
+    >>> # Compute balanced truncation
+    >>> source_len, target_len = infer_seqlen(
+    ...     source_len=100,
+    ...     target_len=200,
+    ...     cutoff_len=256
+    ... )
+    >>> # Result balances truncation between source and target
+
+See Also:
+    llamafactory.data.processor.supervised: SupervisedDatasetProcessor implementation.
+    llamafactory.data.processor.pairwise: PairwiseDatasetProcessor implementation.
+    llamafactory.data.template: Template class used by processors.
+"""
+
 import bisect
 from abc import ABC, abstractmethod
 from dataclasses import dataclass

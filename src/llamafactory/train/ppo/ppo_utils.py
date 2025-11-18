@@ -12,6 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide utility functions for PPO training operations.
+
+This module contains helper functions for PPO training including API-based
+reward fetching, model adapter switching between default and reward heads,
+and layernorm parameter management for numerical stability.
+
+Key Functions:
+    get_rewards_from_server: Fetch reward scores from an external API server.
+    replace_model: Switch between default and reward adapters/valueheads.
+    dump_layernorm: Save layernorm parameters before dtype conversion.
+    restore_layernorm: Restore layernorm parameters after generation.
+
+Example:
+    >>> from llamafactory.train.ppo.ppo_utils import replace_model, get_rewards_from_server
+    >>> # Switch to reward model adapter
+    >>> replace_model(unwrapped_model, target="reward")
+    >>> rewards = get_rewards_from_server(server_url, messages)
+    >>> # Switch back to default adapter
+    >>> replace_model(unwrapped_model, target="default")
+
+See Also:
+    - llamafactory.train.ppo.trainer: PPO trainer using these utilities.
+    - llamafactory.train.trainer_utils: Model creation utilities.
+"""
+
 import json
 from contextlib import nullcontext
 from typing import TYPE_CHECKING, Literal, Optional

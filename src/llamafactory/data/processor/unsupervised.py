@@ -12,6 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""
+Process datasets for unsupervised and PPO training.
+
+This module implements the UnsupervisedDatasetProcessor for preparing datasets
+for PPO (Proximal Policy Optimization) and other reinforcement learning methods.
+It creates prompts without labels, suitable for generation during RL training,
+and also supports prediction/generation tasks.
+
+Key Classes and Functions:
+    UnsupervisedDatasetProcessor: Processor for unsupervised/PPO data.
+
+Example:
+    >>> from llamafactory.data.processor.unsupervised import UnsupervisedDatasetProcessor
+    >>> processor = UnsupervisedDatasetProcessor(
+    ...     template=template,
+    ...     tokenizer=tokenizer,
+    ...     processor=None,
+    ...     data_args=data_args
+    ... )
+    >>> model_inputs = processor.preprocess_dataset(examples)
+    >>> # Outputs include: input_ids, attention_mask, labels (for reference)
+
+See Also:
+    llamafactory.data.processor.processor_utils: Base DatasetProcessor class.
+    llamafactory.train.ppo: PPO trainer implementation.
+    llamafactory.train.grpo: GRPO trainer implementation.
+"""
+
 from collections import defaultdict
 from typing import TYPE_CHECKING, Any, Optional
 

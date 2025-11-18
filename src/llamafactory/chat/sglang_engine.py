@@ -12,6 +12,70 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the SGLang inference engine for high-throughput generation.
+
+This module provides the SGLang-based inference engine, leveraging SGLang's
+optimized serving capabilities for high-throughput text generation. SGLang
+offers advanced features like RadixAttention for efficient prefix caching,
+optimized CUDA kernels, and continuous batching for improved performance.
+
+The engine launches an SGLang server process and communicates via HTTP requests,
+providing streaming token generation and LoRA adapter support. It automatically
+handles server lifecycle management including startup, health checks, and
+graceful shutdown.
+
+Key Classes:
+    SGLangEngine: Inference engine using SGLang HTTP server.
+
+Key Methods (SGLangEngine):
+    chat: Generate complete responses via SGLang server.
+    stream_chat: Stream tokens with HTTP chunked transfer.
+    get_scores: Not supported (raises NotImplementedError).
+
+Key Features:
+    - HTTP server-based architecture for stability
+    - Automatic server lifecycle management
+    - LoRA adapter hot-loading support
+    - Streaming response with SSE (Server-Sent Events)
+    - Configurable tensor parallelism
+    - Memory fraction control for GPU utilization
+
+Usage Example:
+    >>> from llamafactory.chat.sglang_engine import SGLangEngine
+    >>> from llamafactory.hparams import (
+    ...     ModelArguments, DataArguments,
+    ...     FinetuningArguments, GeneratingArguments
+    ... )
+    >>>
+    >>> # Initialize with SGLang-specific arguments
+    >>> model_args = ModelArguments(
+    ...     model_name_or_path="meta-llama/Llama-2-7b-chat-hf",
+    ...     sglang_maxlen=4096,
+    ...     sglang_mem_fraction=0.9,
+    ...     sglang_tp_size=1
+    ... )
+    >>> data_args = DataArguments(template="llama2")
+    >>> finetuning_args = FinetuningArguments(stage="sft")
+    >>> generating_args = GeneratingArguments()
+    >>>
+    >>> engine = SGLangEngine(
+    ...     model_args, data_args, finetuning_args, generating_args
+    ... )
+    >>>
+    >>> # Generate with streaming
+    >>> import asyncio
+    >>> messages = [{"role": "user", "content": "Write a haiku about coding."}]
+    >>> async def stream():
+    ...     async for token in engine.stream_chat(messages):
+    ...         print(token, end="")
+    >>> asyncio.run(stream())
+
+See Also:
+    llamafactory.chat.base_engine: Abstract base class definition.
+    sglang.utils.launch_server_cmd: SGLang server launcher.
+    https://docs.sglang.ai/backend/send_request.html: SGLang HTTP API docs.
+"""
+
 import asyncio
 import atexit
 import json

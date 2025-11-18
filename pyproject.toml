@@ -30,11 +30,9 @@ ignore = [
     "E501", # line too long
     "E731", # lambda function
     "E741", # ambiguous var name
-    "D100", # no doc public module
     "D101", # no doc public class
     "D102", # no doc public method
     "D103", # no doc public function
-    "D104", # no doc public package
     "D105", # no doc magic method
     "D107", # no doc __init__
 ]

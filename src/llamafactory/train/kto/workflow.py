@@ -15,6 +15,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement the KTO workflow for binary feedback preference alignment.
+
+This module provides the complete KTO training pipeline including tokenizer
+and model loading, reference model creation, KTO dataset preparation with
+binary tags, trainer initialization, training, and evaluation.
+
+Key Functions:
+    run_kto: Execute the complete KTO training workflow.
+
+Example:
+    >>> from llamafactory.train.kto.workflow import run_kto
+    >>> from llamafactory.hparams import get_train_args
+    >>> model_args, data_args, training_args, finetuning_args, _ = get_train_args()
+    >>> run_kto(model_args, data_args, training_args, finetuning_args)
+
+See Also:
+    - llamafactory.train.kto.trainer: Custom KTO trainer used in this workflow.
+    - llamafactory.train.trainer_utils: Reference model creation.
+    - llamafactory.train.tuner: Main entry point that calls this workflow.
+    - llamafactory.data.collator: KTO data collator with binary tags.
+"""
+
 from typing import TYPE_CHECKING, Optional
 
 from ...data import KTODataCollatorWithPadding, get_dataset, get_template_and_fix_tokenizer

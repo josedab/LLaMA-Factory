@@ -12,6 +12,94 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define OpenAI-compatible data models for API request and response protocols.
+
+This module contains all Pydantic data models that define the structure of
+API requests and responses. The models are designed to be compatible with
+the OpenAI API specification, allowing clients to use existing OpenAI SDK
+code with minimal modifications.
+
+The module defines models for:
+    - Chat completion requests and responses (streaming and non-streaming)
+    - Function/tool calling definitions and invocations
+    - Multimodal input handling (text, images, videos, audio)
+    - Model listing and information
+    - Score evaluation for reward models
+
+Key Classes:
+    ChatCompletionRequest: Input model for chat completion API.
+    ChatCompletionResponse: Output model for non-streaming completions.
+    ChatCompletionStreamResponse: Output model for streaming completion chunks.
+    ScoreEvaluationRequest: Input model for reward model scoring.
+    ScoreEvaluationResponse: Output model for score evaluation results.
+
+Key Enums:
+    Role: Message roles (user, assistant, system, function, tool).
+    Finish: Completion finish reasons (stop, length, tool_calls).
+
+Example:
+    Create a chat completion request::
+
+        from llamafactory.api.protocol import (
+            ChatCompletionRequest,
+            ChatMessage,
+            Role
+        )
+
+        request = ChatCompletionRequest(
+            model="gpt-3.5-turbo",
+            messages=[
+                ChatMessage(role=Role.SYSTEM, content="You are helpful."),
+                ChatMessage(role=Role.USER, content="Hello!")
+            ],
+            temperature=0.7,
+            max_tokens=100,
+            stream=False
+        )
+
+    Create a multimodal message with image::
+
+        from llamafactory.api.protocol import (
+            ChatMessage,
+            MultimodalInputItem,
+            URL,
+            Role
+        )
+
+        message = ChatMessage(
+            role=Role.USER,
+            content=[
+                MultimodalInputItem(type="text", text="What's in this image?"),
+                MultimodalInputItem(
+                    type="image_url",
+                    image_url=URL(url="https://example.com/image.png")
+                )
+            ]
+        )
+
+    Define tool/function for the model::
+
+        from llamafactory.api.protocol import FunctionAvailable, FunctionDefinition
+
+        tool = FunctionAvailable(
+            type="function",
+            function=FunctionDefinition(
+                name="get_weather",
+                description="Get current weather",
+                parameters={
+                    "type": "object",
+                    "properties": {"location": {"type": "string"}}
+                }
+            )
+        )
+
+See Also:
+    - :mod:`llamafactory.api.chat`: Uses these models for request processing.
+    - :mod:`llamafactory.api.app`: Registers these models with FastAPI endpoints.
+    - OpenAI API reference: https://platform.openai.com/docs/api-reference/chat
+    - Pydantic documentation: https://docs.pydantic.dev/
+"""
+
 import time
 from enum import Enum, unique
 from typing import Any, Optional, Union

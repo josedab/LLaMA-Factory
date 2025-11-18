@@ -12,6 +12,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Support Mixture-of-Depths (MoD) model loading and conversion.
+
+This module provides integration with the MoD library for loading and
+converting models with Mixture-of-Depths architecture. MoD allows models
+to dynamically skip computation for certain tokens, improving efficiency.
+
+Key Functions:
+    load_mod_pretrained_model: Load a pre-trained MoD model.
+    convert_pretrained_model_to_mod: Convert standard model to MoD architecture.
+
+Mixture-of-Depths Concept:
+    Unlike standard transformers where every token passes through all layers,
+    MoD models learn to route tokens dynamically, skipping layers for tokens
+    that don't need full processing. This can significantly reduce computation
+    while maintaining quality.
+
+Supported Models:
+    Models listed in MOD_SUPPORTED_MODELS constant (typically LLaMA variants).
+
+Usage Modes:
+    - "load": Load an existing MoD checkpoint.
+    - "convert": Convert a standard model to MoD architecture.
+
+Example:
+    >>> from llamafactory.model.model_utils.mod import convert_pretrained_model_to_mod
+    >>> from transformers import AutoModelForCausalLM, AutoConfig
+    >>>
+    >>> config = AutoConfig.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> model_args.mixture_of_depths = "convert"
+    >>> mod_model = convert_pretrained_model_to_mod(model, config, model_args)
+
+See Also:
+    llamafactory.model.loader: Uses MoD functions based on mixture_of_depths arg.
+    https://arxiv.org/abs/2404.02258: Mixture-of-Depths paper.
+"""
+
 from typing import TYPE_CHECKING
 
 from ...extras.constants import MOD_SUPPORTED_MODELS

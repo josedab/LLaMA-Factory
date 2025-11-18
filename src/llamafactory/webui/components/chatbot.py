@@ -12,6 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Build the chat interface components for interactive model conversations.
+
+This module creates the chatbot UI with message display, input controls,
+generation parameters, and multimodal input support. It handles chat message
+streaming, tool/function calling, and integrates with the WebChatModel for
+inference.
+
+Key Functions:
+    check_json_schema: Validate JSON schema for tool definitions.
+    create_chat_box: Build complete chat interface with all controls.
+
+Example:
+    >>> from llamafactory.webui.components.chatbot import create_chat_box
+    >>> from llamafactory.webui.engine import Engine
+    >>> engine = Engine()
+    >>> # Create chat box (initially hidden)
+    >>> chatbot, messages, chat_elems = create_chat_box(engine, visible=False)
+    >>> # Register elements with manager
+    >>> engine.manager.add_elems("infer", chat_elems)
+    >>> # Chat elements include: chat_box, role, system, tools, query,
+    >>> # submit_btn, max_new_tokens, top_p, temperature, etc.
+
+See Also:
+    llamafactory.webui.chatter.WebChatModel: Handles chat inference logic.
+    llamafactory.webui.components.infer: Inference tab that uses chat box.
+    llamafactory.webui.locales: Locale strings for chat component labels.
+"""
+
 import inspect
 import json
 from typing import TYPE_CHECKING

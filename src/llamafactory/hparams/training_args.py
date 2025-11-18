@@ -12,6 +12,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Define training arguments including Ray distributed training configuration.
+
+This module provides dataclass definitions for training hyperparameters in
+LLaMA-Factory, extending HuggingFace's Seq2SeqTrainingArguments with Ray
+distributed training support and MCore Adapter compatibility. It handles
+both single-node and distributed training configurations.
+
+Key Classes:
+    RayArguments: Ray distributed training configuration including worker
+        count, resource allocation, storage paths, and placement strategies.
+    TrainingArguments: Main training arguments class combining Ray settings
+        with HuggingFace Seq2SeqTrainingArguments or MCore Adapter arguments.
+
+Key Attributes (RayArguments):
+    ray_run_name: Experiment name for Ray training runs.
+    ray_storage_path: Storage location for training results.
+    ray_num_workers: Number of Ray workers for distributed training.
+    resources_per_worker: GPU/CPU resources per worker.
+    placement_strategy: Worker placement strategy (SPREAD/PACK).
+
+Key Attributes (TrainingArguments):
+    Inherits all attributes from Seq2SeqTrainingArguments including:
+    output_dir, num_train_epochs, per_device_train_batch_size,
+    learning_rate, gradient_accumulation_steps, etc.
+
+Example:
+    >>> from llamafactory.hparams import TrainingArguments, RayArguments
+    >>> training_args = TrainingArguments(
+    ...     output_dir="./output",
+    ...     num_train_epochs=3,
+    ...     per_device_train_batch_size=4,
+    ...     learning_rate=2e-5
+    ... )
+
+    >>> ray_args = RayArguments(
+    ...     ray_num_workers=4,
+    ...     resources_per_worker={"GPU": 1}
+    ... )
+
+See Also:
+    transformers.Seq2SeqTrainingArguments: Base training arguments class.
+    llamafactory.hparams.FinetuningArguments: Fine-tuning method configuration.
+    ray.train: Ray distributed training framework.
+"""
+
 import json
 from dataclasses import dataclass, field
 from typing import Literal, Optional, Union

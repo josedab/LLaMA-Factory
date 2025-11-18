@@ -12,6 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Manage Gradio component registration and lookup for WebUI.
+
+This module implements the Manager class that tracks all Gradio components
+used in the web interface. It provides a centralized registry for component
+lookup by ID, enabling dynamic updates and event handling across the UI.
+Components are organized by tab name and element name in a hierarchical
+ID structure.
+
+Key Classes:
+    Manager: Registry for Gradio components with methods for adding,
+        retrieving, and iterating over UI elements by their IDs.
+
+Example:
+    >>> from llamafactory.webui.manager import Manager
+    >>> manager = Manager()
+    >>> # Register components for a tab
+    >>> import gradio as gr
+    >>> lang = gr.Dropdown(choices=["en", "zh"])
+    >>> model_name = gr.Textbox()
+    >>> manager.add_elems("top", {"lang": lang, "model_name": model_name})
+    >>> # Retrieve component by ID
+    >>> lang_elem = manager.get_elem_by_id("top.lang")
+    >>> # Get all components as a list (for Gradio outputs)
+    >>> all_elems = manager.get_elem_list()
+    >>> # Iterate over elements with names
+    >>> for name, elem in manager.get_elem_iter():
+    ...     print(f"{name}: {type(elem)}")
+
+See Also:
+    llamafactory.webui.engine.Engine: Uses Manager for component coordination.
+    llamafactory.webui.runner.Runner: Accesses components via Manager.
+    llamafactory.webui.locales: Locale strings keyed by element names.
+"""
+
 from collections.abc import Generator
 from typing import TYPE_CHECKING
 

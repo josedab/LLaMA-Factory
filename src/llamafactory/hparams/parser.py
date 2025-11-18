@@ -15,6 +15,43 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Parse and validate command-line arguments and configuration files.
+
+This module provides the argument parsing infrastructure for LLaMA-Factory,
+handling configuration from YAML/JSON files and command-line arguments. It
+includes comprehensive validation logic to ensure argument compatibility
+across different training stages, fine-tuning methods, and hardware setups.
+
+Key Functions:
+    read_args: Read arguments from config files (YAML/JSON) or command line.
+    get_train_args: Parse and validate all training-related arguments.
+    get_infer_args: Parse arguments for model inference and export.
+    get_eval_args: Parse arguments for model evaluation.
+    get_ray_args: Parse Ray distributed training arguments.
+
+Internal Functions:
+    _parse_args: Core argument parsing with HfArgumentParser.
+    _verify_model_args: Validate model argument combinations.
+    _check_extra_dependencies: Verify required packages are installed.
+    _set_transformers_logging: Configure transformers logging level.
+
+Example:
+    >>> from llamafactory.hparams import get_train_args
+    >>> # Parse from YAML config
+    >>> args = get_train_args({"model_name_or_path": "llama-2-7b", "stage": "sft"})
+    >>> model_args, data_args, training_args, finetuning_args, gen_args = args
+
+    >>> # Parse from command line
+    >>> from llamafactory.hparams import read_args
+    >>> config = read_args()  # Reads sys.argv
+
+See Also:
+    transformers.HfArgumentParser: Underlying argument parser.
+    llamafactory.hparams.DataArguments: Data configuration dataclass.
+    llamafactory.hparams.ModelArguments: Model configuration dataclass.
+    llamafactory.hparams.TrainingArguments: Training configuration dataclass.
+"""
+
 import os
 import sys
 from pathlib import Path

@@ -12,6 +12,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement data loading plugins for v1 data pipeline.
+
+This module provides plugin classes for loading datasets from various sources
+and adjusting dataset indices for size and weight-based sampling. The loaders
+support automatic format detection and can handle local files, directories,
+and streaming datasets.
+
+The plugins implement a dataclass-based design that allows easy configuration
+and composition with the main DataEngine.
+
+Key Classes:
+    DataLoaderPlugin: Main loader plugin that auto-detects file formats and
+        loads data from local files or directories using HuggingFace datasets.
+    DataIndexPlugin: Plugin for adjusting dataset indices based on desired
+        size or weight for dataset mixing and balancing.
+    DataSelectorPlugin: Plugin for selecting samples using slice or list-based
+        indexing operations.
+
+Example:
+    Load data from a JSON file::
+
+        from llamafactory.v1.config.data_args import DataArguments
+        from llamafactory.v1.plugins.data_plugins.loader import DataLoaderPlugin
+
+        data_args = DataArguments(dataset_dir="./data")
+        loader = DataLoaderPlugin(args=data_args)
+        dataset = loader.auto_load_data({"file_name": "train.json"})
+
+    Adjust dataset index for size::
+
+        from llamafactory.v1.plugins.data_plugins.loader import DataIndexPlugin
+
+        plugin = DataIndexPlugin()
+        adjusted_index = plugin.adjust_data_index(data_index, size=1000, weight=None)
+
+    Select samples using slice::
+
+        from llamafactory.v1.plugins.data_plugins.loader import DataSelectorPlugin
+
+        selector = DataSelectorPlugin(data_index=index)
+        selected = selector.select(slice(0, 100))
+
+See Also:
+    llamafactory.v1.core.data_engine: Main consumer of these plugins.
+    llamafactory.v1.extras.types: DatasetInfo type definition.
+"""
 
 import os
 from dataclasses import dataclass

@@ -15,6 +15,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement custom Seq2Seq trainer for supervised fine-tuning with generation support.
+
+This module extends HuggingFace's Seq2SeqTrainer to support custom optimizers,
+schedulers, FP8 training, DFT loss, and prediction saving functionality for
+supervised fine-tuning workflows.
+
+Key Classes:
+    CustomSeq2SeqTrainer: Extended Seq2SeqTrainer with generative metric support.
+
+Example:
+    >>> from llamafactory.train.sft.trainer import CustomSeq2SeqTrainer
+    >>> trainer = CustomSeq2SeqTrainer(
+    ...     model=model,
+    ...     args=training_args,
+    ...     finetuning_args=finetuning_args,
+    ...     data_collator=data_collator,
+    ...     gen_kwargs=gen_kwargs,
+    ...     compute_metrics=compute_metrics,
+    ...     **tokenizer_module
+    ... )
+    >>> trainer.train()
+    >>> trainer.save_predictions(dataset, predict_results)
+
+See Also:
+    - transformers.Seq2SeqTrainer: Base trainer class.
+    - llamafactory.train.sft.workflow: SFT workflow using this trainer.
+    - llamafactory.train.sft.metric: Metrics used with this trainer.
+"""
+
 import json
 import os
 from types import MethodType

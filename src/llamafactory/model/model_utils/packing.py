@@ -37,6 +37,45 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""Enable sequence packing with block diagonal attention masks.
+
+This module implements sequence packing for efficient training by packing
+multiple sequences into a single batch and using block diagonal attention
+to prevent cross-sequence attention. This maximizes GPU utilization by
+reducing padding tokens.
+
+Key Functions:
+    configure_packing: Enable block diagonal attention for packed sequences.
+    get_seqlens_in_batch: Extract sequence lengths from packed attention mask.
+    get_unpad_data: Prepare indices and cumulative lengths for FlashAttention.
+
+How Sequence Packing Works:
+    1. Multiple sequences are concatenated into one long sequence.
+    2. Attention mask indicates which tokens belong to which sequence.
+    3. Block diagonal attention ensures tokens only attend within their sequence.
+    4. FlashAttention's varlen functions handle the variable-length sequences.
+
+Attention Mask Format:
+    The attention mask uses integers to indicate sequence membership:
+    - 0: Padding token
+    - 1: Token belongs to sequence 1
+    - 2: Token belongs to sequence 2
+    - etc.
+
+Example:
+    >>> from llamafactory.model.model_utils.packing import get_seqlens_in_batch
+    >>> import torch
+    >>>
+    >>> # Two sequences: lengths 2 and 3, with 1 padding token
+    >>> attention_mask = torch.tensor([[1, 1, 2, 2, 2, 0]])
+    >>> seqlens = get_seqlens_in_batch(attention_mask)
+    >>> print(seqlens)  # tensor([2, 3])
+
+See Also:
+    llamafactory.model.patcher: Calls configure_packing in patch_config.
+    llamafactory.data: Data processing that creates packed attention masks.
+"""
+
 from typing import TYPE_CHECKING
 
 import torch

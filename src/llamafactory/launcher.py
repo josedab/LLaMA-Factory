@@ -12,6 +12,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+r"""Command routing and distributed training launcher for LLaMA-Factory.
+
+This module handles command routing from the CLI and manages distributed
+training setup using torchrun. It provides the main dispatch logic for
+all LlamaFactory commands and automatically configures multi-GPU and
+multi-node training environments.
+
+Commands:
+    train: Launch distributed training with automatic torchrun setup
+    api: Start OpenAI-compatible API server
+    chat: Interactive chat interface in CLI
+    webchat: Chat interface in Web UI
+    webui: Launch LlamaBoard training UI
+    export: Merge LoRA adapters and export model
+    env: Print environment information
+    version: Show version and project info
+
+Environment Variables:
+    FORCE_TORCHRUN: Force using torchrun even for single GPU
+    NNODES: Number of nodes for distributed training
+    NODE_RANK: Rank of current node
+    NPROC_PER_NODE: Number of processes per node
+    MASTER_ADDR: Master node address
+    MASTER_PORT: Master node port
+    RDZV_ID: Rendezvous ID for elastic training
+    MIN_NNODES: Minimum nodes for elastic training
+    MAX_NNODES: Maximum nodes for elastic training
+
+Key Functions:
+    launch: Main command dispatcher and distributed training launcher
+
+Example:
+    Direct usage (usually called via cli.py)::
+
+        from llamafactory.launcher import launch
+        launch()
+
+    Or via command line::
+
+        llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
+        llamafactory-cli api --model_name_or_path meta-llama/Llama-3-8B
+
+See Also:
+    - cli: Main entry point module
+    - train.tuner: Training orchestration (run_exp, export_model)
+    - api.app: API server implementation (run_api)
+    - chat.chat_model: Chat interface (run_chat)
+    - webui.interface: Web UI implementations (run_web_ui, run_web_demo)
+"""
+
 import os
 import subprocess
 import sys

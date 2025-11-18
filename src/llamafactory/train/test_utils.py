@@ -12,6 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide testing utilities for LLaMA-Factory model and training validation.
+
+This module contains helper functions for testing model loading, comparing model
+states, validating LoRA configurations, and loading datasets in test scenarios.
+These utilities are primarily used in unit tests to verify training functionality.
+
+Key Functions:
+    compare_model: Compare state dictionaries of two models for equality.
+    check_lora_model: Validate LoRA model configuration and parameter states.
+    load_train_model: Load a model configured for training with specified arguments.
+    load_infer_model: Load a model configured for inference with specified arguments.
+    load_reference_model: Load a reference model for comparison testing.
+    load_dataset_module: Load dataset module with specified training arguments.
+    patch_valuehead_model: Patch AutoModelForCausalLMWithValueHead for testing.
+
+Example:
+    >>> from llamafactory.train.test_utils import load_train_model, check_lora_model
+    >>> model = load_train_model(
+    ...     model_name_or_path="meta-llama/Llama-2-7b",
+    ...     finetuning_type="lora",
+    ...     stage="sft"
+    ... )
+    >>> linear_modules, extra_modules = check_lora_model(model)
+    >>> assert "q_proj" in linear_modules
+
+See Also:
+    - llamafactory.model: Model loading utilities used by test functions.
+    - llamafactory.data: Dataset loading utilities used by test functions.
+    - llamafactory.hparams: Argument parsing used for test configuration.
+"""
+
 from typing import TYPE_CHECKING, Optional, Union
 
 import torch

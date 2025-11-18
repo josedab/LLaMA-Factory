@@ -12,6 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Expose pre-training (PT) workflow for causal language model training.
+
+This package provides the pre-training workflow for training language models
+from scratch or continuing pre-training on new data using next-token prediction
+as the training objective.
+
+Key Functions:
+    run_pt: Execute the pre-training workflow with specified arguments.
+
+Example:
+    >>> from llamafactory.train.pt import run_pt
+    >>> run_pt(model_args, data_args, training_args, finetuning_args, callbacks)
+
+See Also:
+    - llamafactory.train.pt.workflow: Full pre-training workflow implementation.
+    - llamafactory.train.pt.trainer: Custom trainer for pre-training.
+    - llamafactory.train.tuner: Main training orchestration.
+"""
+
 from .workflow import run_pt
 
 

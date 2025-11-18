@@ -12,6 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide FP8 training configuration and utilities for HuggingFace Accelerate.
+
+This module implements FP8 (8-bit floating point) training support through
+HuggingFace Accelerate with TorchAO backend. It handles environment configuration,
+recipe creation, module filtering for FP8 conversion, and status verification.
+
+Key Functions:
+    create_fp8_kwargs: Create AORecipeKwargs for FP8 training configuration.
+    get_fp8_mixed_precision: Get mixed precision setting for Accelerate.
+    configure_fp8_environment: Configure environment variables for FP8 training.
+    verify_fp8_status: Verify FP8 training is properly enabled after model preparation.
+
+Example:
+    >>> from llamafactory.train.fp8_utils import configure_fp8_environment, create_fp8_kwargs
+    >>> if model_args.fp8:
+    ...     configure_fp8_environment(model_args)
+    ...     fp8_kwargs = create_fp8_kwargs(model_args)
+    ...     # Pass fp8_kwargs to accelerator initialization
+
+See Also:
+    - llamafactory.train.pt.trainer: Pre-training trainer using FP8 utilities.
+    - llamafactory.train.sft.trainer: SFT trainer using FP8 utilities.
+    - accelerate.utils.AORecipeKwargs: Accelerate's FP8 configuration class.
+"""
+
 from typing import TYPE_CHECKING, Any, Optional
 
 from ..extras import logging

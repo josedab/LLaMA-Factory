@@ -15,6 +15,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Implement pairwise trainer for reward model training with valuehead support.
+
+This module extends HuggingFace's Trainer to compute pairwise ranking loss
+for reward modeling, supporting custom optimizers, schedulers, and prediction
+saving for chosen/rejected score pairs.
+
+Key Classes:
+    PairwiseTrainer: Trainer for pairwise reward model training with logsigmoid loss.
+
+Example:
+    >>> from llamafactory.train.rm.trainer import PairwiseTrainer
+    >>> trainer = PairwiseTrainer(
+    ...     model=model,  # AutoModelForCausalLMWithValueHead
+    ...     args=training_args,
+    ...     finetuning_args=finetuning_args,
+    ...     data_collator=data_collator,
+    ...     compute_metrics=compute_metrics,
+    ...     **tokenizer_module
+    ... )
+    >>> trainer.train()
+    >>> trainer.save_predictions(predict_results)
+
+See Also:
+    - transformers.Trainer: Base trainer class.
+    - llamafactory.train.rm.workflow: RM workflow using this trainer.
+    - llamafactory.train.callbacks.FixValueHeadModelCallback: Valuehead checkpoint fixing.
+    - trl.AutoModelForCausalLMWithValueHead: Model with valuehead for scoring.
+"""
+
 import json
 import os
 from types import MethodType

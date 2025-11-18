@@ -12,6 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Provide miscellaneous model utilities for module discovery and registration.
+
+This module contains utility functions for analyzing model architecture,
+finding modules suitable for adaptation methods (LoRA, GaLore, APOLLO),
+and registering models with HuggingFace's Auto classes.
+
+Key Functions:
+    find_all_linear_modules: Find linear modules for LoRA/GaLore application.
+    find_expanded_modules: Find modules in expanded blocks for LLaMA-Pro.
+    register_autoclass: Register model components for Auto class loading.
+
+Module Discovery:
+    find_all_linear_modules discovers all Linear layers while excluding:
+    - Output layers (lm_head, output_layer, output)
+    - Projector modules for composite models
+    - Vision tower modules (when freeze_vision_tower is True)
+
+LLaMA-Pro Support:
+    find_expanded_modules identifies modules in specific layers for the
+    LLaMA-Pro training strategy where only expanded layers are trained.
+
+Example:
+    >>> from llamafactory.model.model_utils.misc import find_all_linear_modules
+    >>> from transformers import AutoModelForCausalLM
+    >>>
+    >>> model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+    >>> linear_modules = find_all_linear_modules(model, freeze_vision_tower=False)
+    >>> print(linear_modules)
+    >>> # ['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj']
+
+See Also:
+    llamafactory.model.adapter: Uses find_all_linear_modules for LoRA target selection.
+    llamafactory.model.model_utils.visual: COMPOSITE_MODELS registry used here.
+"""
+
 from typing import TYPE_CHECKING
 
 from ...extras import logging

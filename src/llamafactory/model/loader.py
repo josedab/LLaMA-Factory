@@ -12,6 +12,56 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Load and configure pre-trained models, tokenizers, and processors.
+
+This module serves as the main entry point for loading models in LlamaFactory.
+It handles the complete model loading pipeline including configuration patching,
+tokenizer setup, adapter initialization, and value head attachment for RLHF.
+
+Key Functions:
+    load_model: Load a pre-trained model with full configuration pipeline.
+    load_tokenizer: Load tokenizer and optional multimodal processor.
+    load_config: Load model configuration from a checkpoint.
+
+Key Classes:
+    TokenizerModule: TypedDict containing tokenizer and optional processor.
+
+The loading pipeline:
+    1. Load and patch configuration (attention, RoPE, quantization, etc.)
+    2. Apply Liger kernel optimizations if enabled
+    3. Load model weights (with Unsloth/KTransformers if specified)
+    4. Patch model for training (gradient checkpointing, embeddings, etc.)
+    5. Initialize adapters (LoRA, freeze, full tuning)
+    6. Optionally attach value head for RLHF
+
+Example:
+    >>> from llamafactory.model.loader import load_tokenizer, load_model, load_config
+    >>> from llamafactory.hparams import ModelArguments, FinetuningArguments
+    >>>
+    >>> model_args = ModelArguments(
+    ...     model_name_or_path="meta-llama/Llama-2-7b-hf",
+    ...     quantization_bit=4
+    ... )
+    >>> finetuning_args = FinetuningArguments(finetuning_type="lora")
+    >>>
+    >>> # Load tokenizer first
+    >>> tokenizer_module = load_tokenizer(model_args)
+    >>> tokenizer = tokenizer_module["tokenizer"]
+    >>>
+    >>> # Load model with adapters
+    >>> model = load_model(
+    ...     tokenizer,
+    ...     model_args,
+    ...     finetuning_args,
+    ...     is_trainable=True
+    ... )
+
+See Also:
+    llamafactory.model.adapter: Adapter initialization details.
+    llamafactory.model.patcher: Model and config patching functions.
+    llamafactory.hparams: Model and finetuning argument definitions.
+"""
+
 import os
 from typing import TYPE_CHECKING, Any, Optional, TypedDict
 
