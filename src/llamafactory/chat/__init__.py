@@ -12,8 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .base_engine import BaseEngine
+from ._protocols import Generatable, InferenceEngine, Tokenizable
+from .base_engine import BaseEngine, Response
 from .chat_model import ChatModel
 
 
-__all__ = ["BaseEngine", "ChatModel"]
+__all__ = [
+    "BaseEngine",
+    "ChatModel",
+    "Generatable",
+    "InferenceEngine",
+    "Response",
+    "Tokenizable",
+]

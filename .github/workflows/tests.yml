@@ -89,6 +89,12 @@ jobs:
         run: |
           make style && make quality
 
+      - name: Type Check
+        run: |
+          pip install mypy
+          mypy src/llamafactory --config-file pyproject.toml || true  # Non-blocking initially
+        continue-on-error: true  # Non-blocking during initial adoption
+
       - name: Check license
         run: |
           make license

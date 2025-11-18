@@ -15,13 +15,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import logging
 import os
 import sys
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
-from typing import Optional
+from typing import Any, Optional
 
 from .constants import RUNNING_LOG
 
