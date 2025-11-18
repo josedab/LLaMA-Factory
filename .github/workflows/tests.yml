@@ -97,9 +97,23 @@ jobs:
         run: |
           make build
 
-      - name: Test with pytest
+      - name: Test with pytest and coverage
         run: |
-          make test
+          pip install pytest-cov
+          pytest --cov=src/llamafactory --cov-report=xml --cov-report=html --cov-report=term-missing tests/
         env:
           HF_HOME: ${{ runner.temp }}/huggingface
           HF_HUB_OFFLINE: "${{ steps.hf-hub-cache.outputs.cache-hit == 'true' && '1' || '0' }}"
+
+      - name: Check coverage threshold
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.10' && matrix.transformers == null
+        run: |
+          coverage report --fail-under=50
+
+      - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.10' && matrix.transformers == null
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true

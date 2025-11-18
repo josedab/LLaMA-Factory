@@ -93,3 +93,30 @@ conflicts = [
         { extra = "sglang" },
     ],
 ]
+
+[tool.coverage.run]
+source = ["src/llamafactory"]
+branch = true
+omit = [
+    "*/third_party/*",
+    "*/__init__.py",
+    "*/v1/*",  # Experimental, separate coverage
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@abstractmethod",
+]
+show_missing = true
+skip_covered = false
+
+[tool.coverage.html]
+directory = "coverage_html"
+
+[tool.coverage.xml]
+output = "coverage.xml"
