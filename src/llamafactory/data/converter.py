@@ -41,39 +41,133 @@ class DatasetConverter:
     data_args: "DataArguments"
 
     def _find_medias(self, medias: Union["MediaType", list["MediaType"], None]) -> Optional[list["MediaType"]]:
-        r"""Optionally concatenate media path to media dir when loading from local disk."""
+        r"""Find and resolve media paths from the dataset.
+
+        Optionally concatenates media paths to media_dir when loading from local disk.
+        Handles various media formats including single items, lists, and nested lists
+        (for processed video frames).
+
+        Args:
+            medias: Media input which can be:
+                - None: Returns None
+                - Single media item (path or bytes)
+                - List of media items
+                - List of lists (for video frames)
+
+        Returns:
+            List of resolved media items, or None if input is None or empty.
+        """
+        normalized_medias = self._normalize_media_input(medias)
+        if normalized_medias is None:
+            return None
+
+        if not self._should_resolve_paths():
+            return normalized_medias
+
+        return self._resolve_media_paths(normalized_medias)
+
+    def _normalize_media_input(
+        self, medias: Union["MediaType", list["MediaType"], None]
+    ) -> Optional[list["MediaType"]]:
+        """Normalize media input to a list format.
+
+        Args:
+            medias: Raw media input from dataset.
+
+        Returns:
+            Normalized list of media items, or None if input is empty.
+        """
         if medias is None:
             return None
-        elif not isinstance(medias, list):
-            medias = [medias]
-        elif len(medias) == 0:
+
+        if not isinstance(medias, list):
+            return [medias]
+
+        if len(medias) == 0:
             return None
-        else:
-            medias = medias[:]
 
-        if self.dataset_attr.load_from in ["script", "file"]:
-            if isinstance(medias[0], str):
-                for i in range(len(medias)):
-                    media_path = os.path.join(self.data_args.media_dir, medias[i])
-                    if os.path.isfile(media_path):
-                        medias[i] = media_path
-                    else:
-                        logger.warning_rank0_once(
-                            f"Media {medias[i]} does not exist in `media_dir`. Use original path."
-                        )
-            elif isinstance(medias[0], list):  # for processed video frames
-                # medias is a list of lists, e.g., [[frame1.jpg, frame2.jpg], [frame3.jpg, frame4.jpg]]
-                for i in range(len(medias)):
-                    for j in range(len(medias[i])):
-                        media_path = os.path.join(self.data_args.media_dir, medias[i][j])
-                        if os.path.isfile(media_path):
-                            medias[i][j] = media_path
-                        else:
-                            logger.warning_rank0_once(
-                                f"Media {medias[i][j]} does not exist in `media_dir`. Use original path."
-                            )
+        # Return a copy to avoid modifying original
+        return medias[:]
 
+    def _should_resolve_paths(self) -> bool:
+        """Check if media paths should be resolved against media_dir.
+
+        Returns:
+            True if loading from local script or file, False otherwise.
+        """
+        return self.dataset_attr.load_from in ["script", "file"]
+
+    def _resolve_media_paths(self, medias: list["MediaType"]) -> list["MediaType"]:
+        """Resolve media paths by joining with media_dir.
+
+        Handles both flat lists of paths and nested lists (for video frames).
+
+        Args:
+            medias: List of media items to resolve.
+
+        Returns:
+            List with resolved media paths.
+        """
+        if len(medias) == 0:
+            return medias
+
+        first_item = medias[0]
+
+        if isinstance(first_item, str):
+            return self._resolve_flat_media_paths(medias)
+
+        if isinstance(first_item, list):
+            return self._resolve_nested_media_paths(medias)
+
+        # Non-string, non-list items (e.g., bytes) - return as-is
         return medias
+
+    def _resolve_flat_media_paths(self, medias: list[str]) -> list[str]:
+        """Resolve a flat list of media paths.
+
+        Args:
+            medias: List of media path strings.
+
+        Returns:
+            List with resolved paths.
+        """
+        resolved = []
+        for media_path in medias:
+            resolved.append(self._resolve_single_path(media_path))
+        return resolved
+
+    def _resolve_nested_media_paths(self, medias: list[list[str]]) -> list[list[str]]:
+        """Resolve nested lists of media paths (for video frames).
+
+        Args:
+            medias: List of lists containing media path strings.
+
+        Returns:
+            Nested list with resolved paths.
+        """
+        resolved = []
+        for frame_list in medias:
+            resolved_frames = [self._resolve_single_path(path) for path in frame_list]
+            resolved.append(resolved_frames)
+        return resolved
+
+    def _resolve_single_path(self, media_path: str) -> str:
+        """Resolve a single media path against media_dir.
+
+        Args:
+            media_path: Original media path from dataset.
+
+        Returns:
+            Resolved path if file exists in media_dir, otherwise original path.
+        """
+        full_path = os.path.join(self.data_args.media_dir, media_path)
+        if os.path.isfile(full_path):
+            return full_path
+
+        logger.warning_rank0_once(
+            f"Media {media_path} does not exist in `media_dir`. Use original path."
+        )
+        return media_path
 
     @abstractmethod
     def __call__(self, example: dict[str, Any]) -> dict[str, Any]:
